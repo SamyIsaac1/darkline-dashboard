@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: 'Poppins', system-ui, -apple-system, sans-serif;
+  
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: #111615;
+  --foreground: #F2F4F3;
+  
+  --card: #1B2321;
+  --card-foreground: #F2F4F3;
+  
+  --popover: #1B2321;
+  --popover-foreground: #F2F4F3;
+  
+  --primary: #BA9E75;
+  --primary-foreground: #111615;
+  
+  --secondary: #2A3533;
+  --secondary-foreground: #F2F4F3;
+  
+  --muted: #222B29;
+  --muted-foreground: #8A9A97;
+  
+  --accent: #2A3533;
+  --accent-foreground: #F2F4F3;
+  
+  --destructive: #E25858;
+  --destructive-foreground: #FFFFFF;
+  
+  --border: #2E3C39;
+  --input: #2E3C39;
+  --ring: #BA9E75;
+  --radius: 0.625rem;
+}
+
+/* Force dark theme for the layout */
+html {
+  color-scheme: dark;
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased font-sans;
+}
