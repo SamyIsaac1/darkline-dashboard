@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50" fill="none">
+  <!-- Group for Logo Icon -->
+  <g transform="translate(5, 0)">
+    <!-- Handle -->
+    <path d="M 22 18 A 8 8 0 0 1 38 18" fill="none" stroke="#BA9E75" stroke-width="2" stroke-linecap="round" />
+    
+    <!-- Outer Body -->
+    <polygon points="15,20 45,20 41,31 19,31" fill="none" stroke="#BA9E75" stroke-width="2" stroke-linejoin="round" />
+    
+    <!-- Stitching -->
+    <polygon points="17,21.5 43,21.5 40,29.5 20,29.5" fill="none" stroke="#BA9E75" stroke-width="1" stroke-dasharray="2,1.5" stroke-linejoin="round" opacity="0.8" />
+    
+    <!-- Left Leg -->
+    <line x1="16.5" y1="24" x2="13.5" y2="34" stroke="#BA9E75" stroke-width="1.5" stroke-dasharray="3,1.5" stroke-linecap="round" />
+    
+    <!-- Right Leg -->
+    <line x1="43.5" y1="24" x2="46.5" y2="34" stroke="#BA9E75" stroke-width="1.5" stroke-dasharray="3,1.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Text Group -->
+  <text x="62" y="24" font-family="'Outfit', 'Inter', system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#fff" letter-spacing="1">DARKLINE</text>
+  <text x="62" y="37" font-family="'Outfit', 'Inter', system-ui, -apple-system, sans-serif" font-size="7.5" font-weight="700" fill="#BA9E75" letter-spacing="2">HANDMADE BAG</text>
+</svg>
