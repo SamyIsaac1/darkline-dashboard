@@ -54,7 +54,9 @@ export default function RevenueByMonthChart({ orders }: RevenueByMonthChartProps
         <ChartTooltip
           content={
             <ChartTooltipContent
-              formatter={(value) => formatCurrency(Number(value))}
+              formatter={(value: number | string) =>
+                formatCurrency(Number(value))
+              }
             />
           }
         />

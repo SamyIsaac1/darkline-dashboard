@@ -242,8 +242,9 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                 <MapPin className="w-4 h-4" />
                 Delivery Address
               </Label>
-              <Input
-                className="mt-2"
+              <Textarea
+                className="mt-2 min-h-20 resize-y"
+                rows={3}
                 value={orderData.delivery_address}
                 onChange={(e) => setOrderData((p) => ({ ...p, delivery_address: e.target.value }))}
                 onBlur={(e) => handleOrderFieldUpdate('delivery_address', e.target.value || null)}

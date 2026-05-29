@@ -306,15 +306,15 @@ export default function OrderModal() {
               <CustomInput<OrderFormValues> control={form.control} name="method_of_contact" label="Method Of Contact" />
               <CustomInput<OrderFormValues> control={form.control} name="start_date" label="Start Date" type="date" />
               <CustomInput<OrderFormValues> control={form.control} name="end_date" label="End Date" type="date" />
-              <div className="md:col-span-2">
-                <CustomTextarea<OrderFormValues>
-                  control={form.control}
-                  name="delivery_address"
-                  label="Delivery Address"
-                  rows={2}
-                />
-              </div>
             </div>
+
+            <CustomTextarea<OrderFormValues>
+              control={form.control}
+              name="delivery_address"
+              label="Delivery Address"
+              rows={3}
+              className="min-h-20 resize-y"
+            />
 
             <CustomTextarea<OrderFormValues>
               control={form.control}
