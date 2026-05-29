@@ -16,24 +16,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Form } from '@/components/ui/form'
 import CustomInput from '../shared/custom-input'
+import CustomSelect from '../shared/custom-select'
 import CustomTextarea from '../shared/custom-textarea'
-import type { Stage, Status } from '@/types/collection'
 
 const orderFormSchema = z.object({
   order_number: z.string().min(1),
@@ -174,51 +160,28 @@ export default function OrderModal() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
+              <CustomSelect<OrderFormValues>
                 control={form.control}
                 name="client_mode"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Client</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="new">New client</SelectItem>
-                        <SelectItem value="existing">Existing client</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
+                label="Client"
+                className="md:col-span-2"
+                options={[
+                  { value: 'new', label: 'New client' },
+                  { value: 'existing', label: 'Existing client' },
+                ]}
               />
 
               {clientMode === 'existing' ? (
-                <FormField
+                <CustomSelect<OrderFormValues>
                   control={form.control}
                   name="client_id"
-                  render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel>Select Client</FormLabel>
-                      <Select value={field.value || ''} onValueChange={field.onChange}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Choose a client" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {clients.map((client) => (
-                            <SelectItem key={client.id} value={client.id}>
-                              {client.name || 'Unnamed'}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Select Client"
+                  placeholder="Choose a client"
+                  className="md:col-span-2"
+                  options={clients.map((client) => ({
+                    value: client.id,
+                    label: client.name || 'Unnamed',
+                  }))}
                 />
               ) : (
                 <>
@@ -251,54 +214,26 @@ export default function OrderModal() {
                 </>
               )}
 
-              <FormField
+              <CustomSelect<OrderFormValues>
                 control={form.control}
                 name="status_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select value={field.value || ''} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {statuses.map((status: Status) => (
-                          <SelectItem key={status.id} value={status.id}>
-                            {status.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Status"
+                placeholder="Select status"
+                options={statuses.map((status) => ({
+                  value: status.id,
+                  label: status.name,
+                }))}
               />
 
-              <FormField
+              <CustomSelect<OrderFormValues>
                 control={form.control}
                 name="stage_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stage</FormLabel>
-                    <Select value={field.value || ''} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select stage" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {stages.map((stage: Stage) => (
-                          <SelectItem key={stage.id} value={stage.id}>
-                            {stage.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Stage"
+                placeholder="Select stage"
+                options={stages.map((stage) => ({
+                  value: stage.id,
+                  label: stage.name,
+                }))}
               />
 
               <CustomInput<OrderFormValues> control={form.control} name="deposit" label="Deposit" type="number" />
