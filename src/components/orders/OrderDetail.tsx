@@ -22,6 +22,7 @@ import {
   Phone,
   Trash2,
   MapPin,
+  MessageCircle,
 } from 'lucide-react'
 import {
   Select,
@@ -278,7 +279,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
             </div>
 
             <div>
-              <Label className="text-sm text-muted-foreground">Method of Contact</Label>
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Method of Contact
+              </Label>
               <Input
                 className="mt-2"
                 value={orderData.method_of_contact}
