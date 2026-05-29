@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, ListTodo, Users, Settings } from 'lucide-react'
+import { LayoutDashboard, ListTodo, Users, Images, Settings } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +28,11 @@ const navItems = [
     label: 'Clients',
     href: '/clients',
     icon: Users,
+  },
+  {
+    label: 'Gallery',
+    href: '/gallery',
+    icon: Images,
   },
 ]
 

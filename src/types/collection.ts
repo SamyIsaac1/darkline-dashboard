@@ -29,3 +29,10 @@ export type OrderDetail = OrderWithRelations & {
 export type ClientWithOrders = Client & {
   orders: OrderWithRelations[];
 };
+
+export type GalleryImage = Attachment & {
+  order: {
+    order_number: string;
+    client: { name: string | null } | null;
+  } | null;
+};

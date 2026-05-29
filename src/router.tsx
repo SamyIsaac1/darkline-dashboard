@@ -7,6 +7,7 @@ import OrderDetailPage from '@/pages/OrderDetailPage'
 import ClientsPage from '@/pages/ClientsPage'
 import ClientDetailPage from '@/pages/ClientDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
+import GalleryPage from '@/pages/GalleryPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: 'clients/:id',
         element: <ClientDetailPage />,
+      },
+      {
+        path: 'gallery',
+        element: <GalleryPage />,
       },
       {
         path: 'settings',

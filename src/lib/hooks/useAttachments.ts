@@ -5,6 +5,9 @@ import {
   getOrderAttachmentUrl,
   uploadOrderAttachment,
 } from '@/lib/supabase/storage'
+import type { GalleryImage } from '@/types/collection'
+
+export const GALLERY_IMAGES_QUERY_KEY = ['gallery-images'] as const
 
 export function useAttachmentUrl(filePath: string | null | undefined) {
   return useQuery({
@@ -56,6 +59,23 @@ export function useUploadAttachment() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['orders', data.order_id] })
+      queryClient.invalidateQueries({ queryKey: GALLERY_IMAGES_QUERY_KEY })
+    },
+  })
+}
+
+export function useGalleryImages() {
+  return useQuery({
+    queryKey: GALLERY_IMAGES_QUERY_KEY,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('attachments')
+        .select('*, order:orders(order_number, client:clients(name))')
+        .like('mime_type', 'image/%')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data as GalleryImage[]
     },
   })
 }
@@ -84,6 +104,7 @@ export function useDeleteAttachment() {
     onSuccess: (orderId) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['orders', orderId] })
+      queryClient.invalidateQueries({ queryKey: GALLERY_IMAGES_QUERY_KEY })
     },
   })
 }
