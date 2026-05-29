@@ -45,9 +45,9 @@ export default function ProtectedLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0 overflow-x-hidden">
         <Header />
-        <div className="flex-1 overflow-auto">
+        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
           <Outlet />
         </div>
       </SidebarInset>

@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from 'react'
 import { useUpdateOrder } from '@/lib/hooks/useOrders'
 import KanbanColumn from '@/components/orders/KanbanColumn'
+import { cn } from '@/lib/utils'
 
 interface KanbanBoardProps {
   orders: any[]
@@ -71,8 +72,18 @@ export default function KanbanBoard({ orders, stages, statuses }: KanbanBoardPro
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <div className="overflow-x-auto">
-        <div className="flex gap-6 min-w-min pb-6">
+      <div
+        className={cn(
+          'w-full min-w-0 max-w-full',
+          'md:overflow-x-auto md:overscroll-x-contain',
+        )}
+      >
+        <div
+          className={cn(
+            'flex w-full min-w-0 flex-col gap-4',
+            'md:w-max md:flex-row md:gap-6 md:pb-2 md:snap-x md:snap-mandatory',
+          )}
+        >
           {stages.map((stage) => {
             const stageOrders = localOrders.filter(
               (o) => o.stage_id === stage.id

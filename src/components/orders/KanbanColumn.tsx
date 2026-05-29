@@ -22,17 +22,18 @@ export default function KanbanColumn({ stage, orders, statuses }: KanbanColumnPr
     <div
       ref={setNodeRef}
       className={cn(
-        'flex-shrink-0 w-96 bg-muted rounded-lg p-4 transition-colors',
+        'flex w-full min-w-0 shrink-0 flex-col rounded-lg bg-muted p-3 transition-colors sm:p-4',
+        'md:w-72 md:snap-start lg:w-80 xl:w-96',
         isOver && 'bg-muted-foreground/10'
       )}
     >
-      <div className="flex items-center gap-2 mb-4">
+      <div className="mb-3 flex shrink-0 items-center gap-2 sm:mb-4">
         <div
-          className="w-3 h-3 rounded-full"
+          className="h-3 w-3 shrink-0 rounded-full"
           style={{ backgroundColor: stage.color }}
         />
-        <h3 className="font-semibold text-foreground">{stage.name}</h3>
-        <span className="ml-auto text-sm text-muted-foreground bg-background px-2 py-1 rounded">
+        <h3 className="truncate font-semibold text-foreground">{stage.name}</h3>
+        <span className="ml-auto shrink-0 rounded bg-background px-2 py-1 text-sm text-muted-foreground">
           {orders.length}
         </span>
       </div>
@@ -41,7 +42,7 @@ export default function KanbanColumn({ stage, orders, statuses }: KanbanColumnPr
         items={orders.map((o) => o.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="space-y-3">
+        <div className="space-y-3 md:max-h-[min(70vh,calc(100dvh-14rem))] md:overflow-y-auto md:overscroll-y-contain md:pr-0.5">
           {orders.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-sm">
               No orders in this stage

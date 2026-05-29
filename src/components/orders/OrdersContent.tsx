@@ -28,10 +28,10 @@ export default function OrdersContent() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Orders</h1>
-        <div className="flex gap-2">
+    <div className="min-w-0 space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold sm:text-3xl">Orders</h1>
+        <div className="flex flex-wrap gap-2">
           <div className="flex gap-1 bg-muted p-1 rounded-lg">
             <Button
               size="sm"
@@ -70,11 +70,13 @@ export default function OrdersContent() {
 
       {viewMode === 'grid' && <OrdersGrid orders={orders || []} />}
       {viewMode === 'kanban' && (
-        <KanbanBoard
-          orders={orders || []}
-          stages={stages || []}
-          statuses={statuses || []}
-        />
+        <div className="min-w-0 max-w-full overflow-x-hidden">
+          <KanbanBoard
+            orders={orders || []}
+            stages={stages || []}
+            statuses={statuses || []}
+          />
+        </div>
       )}
       {viewMode === 'list' && <OrdersList orders={orders || []} />}
 

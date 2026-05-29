@@ -3,6 +3,7 @@ import { useUIStore } from '@/lib/store/uiStore'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, DollarSign, User, ArrowRight } from 'lucide-react'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 import type { OrderWithRelations } from '@/types/collection'
 
 interface OrdersGridProps {
@@ -36,11 +37,14 @@ export default function OrdersGrid({ orders }: OrdersGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
       {filteredOrders.map((order) => (
-        <Card key={order.id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-          <Link to={`/orders/${order.id}`}>
-            <div className="space-y-4">
+        <Card
+          key={order.id}
+          className="flex h-full flex-col p-6 transition-shadow cursor-pointer hover:shadow-lg"
+        >
+          <Link to={`/orders/${order.id}`} className="flex h-full flex-1 flex-col">
+            <div className="flex flex-1 flex-col gap-4">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Order</p>
@@ -72,12 +76,17 @@ export default function OrdersGrid({ orders }: OrdersGridProps) {
                 </div>
               )}
 
-              {order.total_cost != null && (
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <DollarSign className="w-4 h-4" />
-                  ${order.total_cost.toFixed(2)}
-                </div>
-              )}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                <DollarSign className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <p>
+                  <span className="text-muted-foreground">Deposit </span>
+                  <span className="font-semibold">{formatCurrency(order.deposit)}</span>
+                </p>
+                <p>
+                  <span className="text-muted-foreground">Total </span>
+                  <span className="font-semibold">{formatCurrency(order.total_cost)}</span>
+                </p>
+              </div>
 
               {order.tags && order.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -89,7 +98,7 @@ export default function OrdersGrid({ orders }: OrdersGridProps) {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-border flex items-center justify-between">
+              <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
                 <p className="text-xs text-muted-foreground">{order.stage?.name || 'No Stage'}</p>
                 <ArrowRight className="w-4 h-4 text-muted-foreground" />
               </div>
