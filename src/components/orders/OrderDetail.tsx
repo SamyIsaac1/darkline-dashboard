@@ -177,7 +177,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
   const handleDelete = () => {
     confirmDelete({
       title: 'Delete this order?',
-      description: 'This will permanently remove the order and its attachments.',
+      description: 'This will remove the order from the dashboard. Attachments and activity history are kept.',
       onConfirm: async () => {
         await deleteOrder.mutateAsync(orderId)
         navigate('/orders')

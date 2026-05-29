@@ -22,7 +22,7 @@ interface DeleteConfirmState {
 }
 
 const DEFAULT_TITLE = 'Delete this item?'
-const DEFAULT_DESCRIPTION = 'This action cannot be undone.'
+const DEFAULT_DESCRIPTION = 'This will remove it from the dashboard.'
 
 function buildTitle(request: DeleteConfirmRequest): string {
   if (request.title) return request.title

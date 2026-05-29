@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase/client'
-import { deleteOrderAttachment } from '@/lib/supabase/storage'
+import { softDeleteFields } from '@/lib/supabase/softDelete'
 import type { TablesInsert, TablesUpdate } from '@/types/supabase'
 import type { OrderDetail, OrderWithRelations } from '@/types/collection'
 
@@ -44,6 +44,7 @@ export function useOrders() {
       const { data, error } = await supabase
         .from('orders')
         .select(ORDER_LIST_SELECT)
+        .eq('deleted', false)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -60,6 +61,7 @@ export function useOrder(orderId: string) {
         .from('orders')
         .select(ORDER_DETAIL_SELECT)
         .eq('id', orderId)
+        .eq('deleted', false)
         .single()
 
       if (error) throw error
@@ -125,6 +127,7 @@ export function useUpdateOrder() {
         .from('orders')
         .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('id', id)
+        .eq('deleted', false)
         .select()
         .single()
 
@@ -143,50 +146,18 @@ export function useDeleteOrder() {
 
   return useMutation({
     mutationFn: async (orderId: string) => {
-      const { data: attachments } = await supabase
-        .from('attachments')
-        .select('file_path')
-        .eq('order_id', orderId)
+      const { deleted_at, deleted } = softDeleteFields()
 
-      if (attachments) {
-        for (const att of attachments) {
-          if (
-            att.file_path &&
-            !att.file_path.startsWith('http://') &&
-            !att.file_path.startsWith('https://')
-          ) {
-            try {
-              await deleteOrderAttachment(att.file_path)
-            } catch {
-              // continue deleting DB rows even if storage object missing
-            }
-          }
-        }
-      }
-
-      const { error: activitiesError } = await supabase
-        .from('activities')
-        .delete()
-        .eq('order_id', orderId)
-      if (activitiesError) throw activitiesError
-
-      const { error: attachmentsError } = await supabase
-        .from('attachments')
-        .delete()
-        .eq('order_id', orderId)
-      if (attachmentsError) throw attachmentsError
-
-      const { error: tagsError } = await supabase
-        .from('order_tags')
-        .delete()
-        .eq('order_id', orderId)
-      if (tagsError) throw tagsError
-
-      const { error } = await supabase.from('orders').delete().eq('id', orderId)
+      const { error } = await supabase
+        .from('orders')
+        .update({ deleted, deleted_at, updated_at: deleted_at })
+        .eq('id', orderId)
+        .eq('deleted', false)
       if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['gallery-images'] })
     },
   })
 }

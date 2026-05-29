@@ -24,7 +24,7 @@ export default function ClientDetail({ clientId }: ClientDetailProps) {
   const handleDelete = () => {
     confirmDelete({
       title: 'Delete this client?',
-      description: 'Orders linked to this client may be affected. This cannot be undone.',
+      description: 'This will remove the client from the dashboard. Linked orders will remain.',
       onConfirm: async () => {
         await deleteClient.mutateAsync(clientId)
         navigate('/clients')

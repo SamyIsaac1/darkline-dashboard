@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase/client'
+import { softDeleteFields } from '@/lib/supabase/softDelete'
 import type { TablesInsert, TablesUpdate } from '@/types/supabase'
 import type { ClientWithOrders } from '@/types/collection'
 
@@ -23,6 +24,7 @@ export function useClients() {
       const { data, error } = await supabase
         .from('clients')
         .select('*')
+        .eq('deleted', false)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -77,6 +79,7 @@ export function useUpdateClient() {
         .from('clients')
         .update(updates)
         .eq('id', id)
+        .eq('deleted', false)
         .select()
         .single()
 
@@ -96,10 +99,13 @@ export function useDeleteClient() {
 
   return useMutation({
     mutationFn: async (clientId: string) => {
+      const { deleted, deleted_at } = softDeleteFields()
+
       const { error } = await supabase
         .from('clients')
-        .delete()
+        .update({ deleted, deleted_at })
         .eq('id', clientId)
+        .eq('deleted', false)
 
       if (error) throw error
     },

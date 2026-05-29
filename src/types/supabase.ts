@@ -94,6 +94,8 @@ export type Database = {
         Row: {
           address: string | null
           created_at: string
+          deleted: boolean
+          deleted_at: string | null
           id: string
           name: string | null
           phone: string | null
@@ -102,6 +104,8 @@ export type Database = {
         Insert: {
           address?: string | null
           created_at?: string
+          deleted?: boolean
+          deleted_at?: string | null
           id?: string
           name?: string | null
           phone?: string | null
@@ -110,6 +114,8 @@ export type Database = {
         Update: {
           address?: string | null
           created_at?: string
+          deleted?: boolean
+          deleted_at?: string | null
           id?: string
           name?: string | null
           phone?: string | null
@@ -158,6 +164,8 @@ export type Database = {
           client_id: string | null
           created_at: string | null
           created_by: string
+          deleted: boolean
+          deleted_at: string | null
           delivery_address: string | null
           deposit: number | null
           description: string | null
@@ -178,6 +186,8 @@ export type Database = {
           client_id?: string | null
           created_at?: string | null
           created_by: string
+          deleted?: boolean
+          deleted_at?: string | null
           delivery_address?: string | null
           deposit?: number | null
           description?: string | null
@@ -198,6 +208,8 @@ export type Database = {
           client_id?: string | null
           created_at?: string | null
           created_by?: string
+          deleted?: boolean
+          deleted_at?: string | null
           delivery_address?: string | null
           deposit?: number | null
           description?: string | null
