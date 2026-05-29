@@ -90,6 +90,33 @@ export type Database = {
           },
         ]
       }
+      clients: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          name: string | null
+          phone: string | null
+          phone_2: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          phone_2?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          phone_2?: string | null
+        }
+        Relationships: []
+      }
       order_tags: {
         Row: {
           created_at: string | null
@@ -128,11 +155,10 @@ export type Database = {
       }
       orders: {
         Row: {
+          client_id: string | null
           created_at: string | null
           created_by: string
-          customer_name: string
-          customer_phone: string | null
-          customer_phone_2: string | null
+          delivery_address: string | null
           deposit: number | null
           description: string | null
           end_date: string | null
@@ -141,16 +167,16 @@ export type Database = {
           notes: string | null
           order_number: string
           stage_id: string | null
+          start_date: string | null
           status_id: string | null
           total_cost: number | null
           updated_at: string | null
         }
         Insert: {
+          client_id?: string | null
           created_at?: string | null
           created_by: string
-          customer_name: string
-          customer_phone?: string | null
-          customer_phone_2?: string | null
+          delivery_address?: string | null
           deposit?: number | null
           description?: string | null
           end_date?: string | null
@@ -159,16 +185,16 @@ export type Database = {
           notes?: string | null
           order_number: string
           stage_id?: string | null
+          start_date?: string | null
           status_id?: string | null
           total_cost?: number | null
           updated_at?: string | null
         }
         Update: {
+          client_id?: string | null
           created_at?: string | null
           created_by?: string
-          customer_name?: string
-          customer_phone?: string | null
-          customer_phone_2?: string | null
+          delivery_address?: string | null
           deposit?: number | null
           description?: string | null
           end_date?: string | null
@@ -177,11 +203,19 @@ export type Database = {
           notes?: string | null
           order_number?: string
           stage_id?: string | null
+          start_date?: string | null
           status_id?: string | null
           total_cost?: number | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_stage_id_fkey"
             columns: ["stage_id"]

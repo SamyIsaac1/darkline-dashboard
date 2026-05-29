@@ -55,11 +55,11 @@ export default function OrdersContent() {
         </div>
       </div>
 
-      {/* <OrdersFilter
+      <OrdersFilter
         statuses={statuses || []}
         stages={stages || []}
         tags={tags || []}
-      /> */}
+      />
 
       {viewMode === 'grid' ? (
         <OrdersGrid

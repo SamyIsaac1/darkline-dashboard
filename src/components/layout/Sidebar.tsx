@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, ListTodo, Package, Settings } from 'lucide-react'
+import { LayoutDashboard, ListTodo, Users, Settings } from 'lucide-react'
 import { useUIStore } from '@/lib/store/uiStore'
 import { cn } from '@/lib/utils'
 
@@ -15,9 +15,9 @@ const navItems = [
     icon: ListTodo,
   },
   {
-    label: 'Inventory',
-    href: '/inventory',
-    icon: Package,
+    label: 'Clients',
+    href: '/clients',
+    icon: Users,
   },
 ]
 
@@ -34,7 +34,7 @@ export default function Sidebar() {
     >
       <div className="p-6 border-b border-border">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <img src='/logo-horizontal.svg' />
+          <img src="/logo-horizontal.svg" alt="Logo" />
         </h2>
       </div>
 
@@ -64,7 +64,12 @@ export default function Sidebar() {
       <div className="p-4 border-t border-border">
         <Link
           to="/settings"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+          className={cn(
+            'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
+            location.pathname.startsWith('/settings')
+              ? 'bg-primary text-primary-foreground'
+              : 'text-foreground hover:bg-accent'
+          )}
         >
           <Settings className="w-5 h-5" />
           <span className="font-medium">Settings</span>

@@ -1,103 +1,116 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-
-import { useAddActivity } from '@/lib/hooks/useOrders'
-
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
-
-import CustomInput from '../shared/custom-input'
-import { useAddAttachment } from '@/lib/hooks/useAttachments'
+import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Card } from '../ui/card'
+import { useAddActivity } from '@/lib/hooks/useOrders'
+import { useUploadAttachment } from '@/lib/hooks/useAttachments'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Upload } from 'lucide-react'
+import { toast } from 'sonner'
 
-
-const attachmentSchema = z.object({
-  file_path: z.string().url(),
-  file_name: z.string().optional(),
-})
-
-type AttachmentFormValues = z.infer<
-  typeof attachmentSchema
->
-
+const MAX_FILE_SIZE = 10 * 1024 * 1024
+const ALLOWED_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'text/plain',
+]
 
 export default function AttachmentForm() {
   const { id } = useParams()
+  const orderId = id as string
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+
   const addActivity = useAddActivity()
-  const addAttachment = useAddAttachment()
+  const uploadAttachment = useUploadAttachment()
 
-  const form = useForm<AttachmentFormValues>({
-    resolver: zodResolver(
-      attachmentSchema
-    ),
+  const validateFile = (file: File): string | null => {
+    if (file.size > MAX_FILE_SIZE) {
+      return `${file.name} exceeds 10MB limit`
+    }
+    if (file.type && !ALLOWED_TYPES.includes(file.type)) {
+      return `${file.name} has unsupported file type`
+    }
+    return null
+  }
 
-    defaultValues: {
-      file_path: '',
-      file_name: '',
-    },
-  })
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    const errors: string[] = []
+    const valid: File[] = []
 
-  const onSubmit = async (
-    values: AttachmentFormValues
-  ) => {
+    for (const file of files) {
+      const error = validateFile(file)
+      if (error) errors.push(error)
+      else valid.push(file)
+    }
+
+    if (errors.length) toast.error(errors.join(', '))
+    setSelectedFiles(valid)
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFiles.length || !orderId) return
+
     try {
-      const fileName =
-        values.file_name?.trim() ||
-        values.file_path
-          .split('/')
-          .pop() ||
-        'Attachment'
-
-      await addAttachment.mutateAsync({
-        file_name: fileName,
-        file_path: values.file_path,
-      })
-
-
-      addActivity.mutate({
-        orderId: id as string,
-        activityType: 'attachment',
-        description: `Added attachment: ${fileName}`,
-      })
-
-      form.reset()
-
+      for (const file of selectedFiles) {
+        await uploadAttachment.mutateAsync({ orderId, file })
+        addActivity.mutate({
+          orderId,
+          activityType: 'attachment',
+          description: `Added attachment: ${file.name}`,
+        })
+      }
+      toast.success(
+        selectedFiles.length === 1
+          ? 'Attachment uploaded'
+          : `${selectedFiles.length} attachments uploaded`
+      )
+      setSelectedFiles([])
+      if (fileInputRef.current) fileInputRef.current.value = ''
     } catch (error) {
-      console.error(error)
+      toast.error(error instanceof Error ? error.message : 'Upload failed')
     }
   }
 
   return (
     <Card className="p-6">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(
-            onSubmit
-          )}
-          className="space-y-4"
+      <h3 className="font-semibold mb-4">Upload Attachment</h3>
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="file-upload">Files (images, PDF, docs — max 10MB)</Label>
+          <input
+            id="file-upload"
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept={ALLOWED_TYPES.join(',')}
+            onChange={handleFileChange}
+            className="mt-2 block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground file:cursor-pointer"
+          />
+        </div>
+
+        {selectedFiles.length > 0 && (
+          <ul className="text-sm text-muted-foreground space-y-1">
+            {selectedFiles.map((f) => (
+              <li key={f.name}>{f.name} ({(f.size / 1024).toFixed(1)} KB)</li>
+            ))}
+          </ul>
+        )}
+
+        <Button
+          onClick={handleUpload}
+          disabled={!selectedFiles.length || uploadAttachment.isPending}
         >
-          <CustomInput<AttachmentFormValues>
-            control={form.control}
-            name="file_path"
-            label="Image URL"
-          />
-
-          <CustomInput<AttachmentFormValues>
-            control={form.control}
-            name="file_name"
-            label="File Name"
-          />
-
-          <Button
-            type="submit"
-            disabled={addAttachment.isPending}
-          >
-            {addAttachment.isPending ? 'Adding...' : 'Add Attachment'}
-          </Button>
-        </form>
-      </Form>
+          <Upload className="w-4 h-4 mr-2" />
+          {uploadAttachment.isPending ? 'Uploading...' : 'Upload'}
+        </Button>
+      </div>
     </Card>
   )
 }

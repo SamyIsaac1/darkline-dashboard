@@ -1,46 +1,89 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase/client'
-import type { TablesInsert } from '@/types/supabase'
-import { useParams } from 'react-router-dom'
+import {
+  deleteOrderAttachment,
+  getOrderAttachmentUrl,
+  uploadOrderAttachment,
+} from '@/lib/supabase/storage'
 
-type AttachmentInsert = TablesInsert<'attachments'>
+export function useAttachmentUrl(filePath: string | null | undefined) {
+  return useQuery({
+    queryKey: ['attachment-url', filePath],
+    queryFn: async () => {
+      if (!filePath) return null
+      if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+        return filePath
+      }
+      return getOrderAttachmentUrl(filePath)
+    },
+    enabled: !!filePath,
+    staleTime: 1000 * 60 * 30,
+  })
+}
 
-export function useAddAttachment() {
-    const queryClient = useQueryClient()
-    const { id } = useParams()
+export function useUploadAttachment() {
+  const queryClient = useQueryClient()
 
-    return useMutation({
-        mutationFn: async ({
-            file_name,
-            file_path,
-        }: Partial<AttachmentInsert>) => {
-            const { data: userData } = await supabase.auth.getUser()
-            if (!userData.user) throw new Error('Not authenticated')
-            const { data, error } = await supabase
-                .from('attachments')
-                .insert({
-                    order_id: id,
-                    uploaded_by: userData.user.id,
-                    file_name: file_name,
-                    file_path: file_path,
-                    mime_type: 'image/url',
-                    file_size: null,
-                })
-                .select()
-                .single()
+  return useMutation({
+    mutationFn: async ({
+      orderId,
+      file,
+    }: {
+      orderId: string
+      file: File
+    }) => {
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('Not authenticated')
 
-            if (error) throw error
+      const filePath = await uploadOrderAttachment(orderId, file)
 
-            return data
-        },
+      const { data, error } = await supabase
+        .from('attachments')
+        .insert({
+          order_id: orderId,
+          uploaded_by: userData.user.id,
+          file_name: file.name,
+          file_path: filePath,
+          mime_type: file.type || null,
+          file_size: file.size,
+        })
+        .select()
+        .single()
 
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: ['orders'],
-            })
-            queryClient.invalidateQueries({
-                queryKey: ['orders', data.order_id],
-            })
-        },
-    })
+      if (error) throw error
+      return data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['orders', data.order_id] })
+    },
+  })
+}
+
+export function useDeleteAttachment() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      filePath,
+      orderId,
+    }: {
+      id: string
+      filePath: string
+      orderId: string
+    }) => {
+      if (!filePath.startsWith('http://') && !filePath.startsWith('https://')) {
+        await deleteOrderAttachment(filePath)
+      }
+
+      const { error } = await supabase.from('attachments').delete().eq('id', id)
+      if (error) throw error
+      return orderId
+    },
+    onSuccess: (orderId) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['orders', orderId] })
+    },
+  })
 }

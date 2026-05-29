@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
+import type { OrderWithRelations } from '@/types/collection'
 
 interface RecentOrdersProps {
-  orders: any[]
+  orders: OrderWithRelations[]
 }
 
 export default function RecentOrders({ orders }: RecentOrdersProps) {
@@ -25,7 +26,7 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
         <thead>
           <tr className="border-b border-border">
             <th className="text-left py-3 px-4 font-semibold text-sm">Order #</th>
-            <th className="text-left py-3 px-4 font-semibold text-sm">Customer</th>
+            <th className="text-left py-3 px-4 font-semibold text-sm">Client</th>
             <th className="text-left py-3 px-4 font-semibold text-sm">Status</th>
             <th className="text-left py-3 px-4 font-semibold text-sm">Total</th>
             <th className="text-left py-3 px-4 font-semibold text-sm">Action</th>
@@ -35,21 +36,17 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
           {orders.map((order) => (
             <tr key={order.id} className="border-b border-border hover:bg-accent">
               <td className="py-3 px-4 font-mono text-sm">{order.order_number}</td>
-              <td className="py-3 px-4 text-sm">{order.customer_name}</td>
+              <td className="py-3 px-4 text-sm">{order.client?.name || '—'}</td>
               <td className="py-3 px-4">
                 <Badge
-                  style={{
-                    backgroundColor: order.status?.color || '#3B82F6',
-                  }}
+                  style={{ backgroundColor: order.status?.color || '#3B82F6' }}
                   className="text-white"
                 >
                   {order.status?.name || 'Unknown'}
                 </Badge>
               </td>
               <td className="py-3 px-4 text-sm font-semibold">
-                {order.total_cost
-                  ? `$${order.total_cost.toFixed(2)}`
-                  : 'N/A'}
+                {order.total_cost != null ? `$${order.total_cost.toFixed(2)}` : 'N/A'}
               </td>
               <td className="py-3 px-4">
                 <Link to={`/orders/${order.id}`}>

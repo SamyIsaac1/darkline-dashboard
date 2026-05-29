@@ -4,6 +4,9 @@ import LoginPage from '@/pages/auth/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
 import OrdersPage from '@/pages/OrdersPage'
 import OrderDetailPage from '@/pages/OrderDetailPage'
+import ClientsPage from '@/pages/ClientsPage'
+import ClientDetailPage from '@/pages/ClientDetailPage'
+import SettingsPage from '@/pages/SettingsPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -35,6 +38,18 @@ export const router = createBrowserRouter([
       {
         path: 'orders/:id',
         element: <OrderDetailPage />,
+      },
+      {
+        path: 'clients',
+        element: <ClientsPage />,
+      },
+      {
+        path: 'clients/:id',
+        element: <ClientDetailPage />,
+      },
+      {
+        path: 'settings',
+        element: <SettingsPage />,
       },
     ],
   },

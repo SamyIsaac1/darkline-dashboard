@@ -10,7 +10,7 @@ import {
 import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUpdateOrder } from '@/lib/hooks/useOrders'
 import KanbanColumn from '@/components/orders/KanbanColumn'
 
@@ -23,6 +23,10 @@ interface KanbanBoardProps {
 export default function KanbanBoard({ orders, stages, statuses }: KanbanBoardProps) {
   const [localOrders, setLocalOrders] = useState(orders)
   const updateOrder = useUpdateOrder()
+
+  useEffect(() => {
+    setLocalOrders(orders)
+  }, [orders])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
