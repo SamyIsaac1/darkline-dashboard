@@ -16,6 +16,9 @@ import type { OrderWithRelations } from '@/types/collection'
 
 interface OrdersListProps {
   orders: OrderWithRelations[]
+  hideClientColumn?: boolean
+  applyFilters?: boolean
+  emptyMessage?: string
 }
 
 function formatCurrency(value: number | null | undefined): string {
@@ -31,28 +34,37 @@ function formatDateRange(order: OrderWithRelations): string {
   return '—'
 }
 
-export default function OrdersList({ orders }: OrdersListProps) {
+export default function OrdersList({
+  orders,
+  hideClientColumn = false,
+  applyFilters = true,
+  emptyMessage = 'No orders found',
+}: OrdersListProps) {
   const { searchQuery, selectedStatus, selectedStage, selectedTags } = useUIStore()
 
-  const filteredOrders = orders.filter((order) => {
-    const clientName = order.client?.name?.toLowerCase() ?? ''
-    const matchesSearch =
-      order.order_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      clientName.includes(searchQuery.toLowerCase())
+  const filteredOrders = applyFilters
+    ? orders.filter((order) => {
+        const clientName = order.client?.name?.toLowerCase() ?? ''
+        const description = order.description?.toLowerCase() ?? ''
+        const matchesSearch =
+          order.order_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          clientName.includes(searchQuery.toLowerCase()) ||
+          description.includes(searchQuery.toLowerCase())
 
-    const matchesStatus = !selectedStatus || order.status_id === selectedStatus
-    const matchesStage = !selectedStage || order.stage_id === selectedStage
-    const matchesTags =
-      selectedTags.length === 0 ||
-      order.tags?.some((ot) => selectedTags.includes(ot.tag_id))
+        const matchesStatus = !selectedStatus || order.status_id === selectedStatus
+        const matchesStage = !selectedStage || order.stage_id === selectedStage
+        const matchesTags =
+          selectedTags.length === 0 ||
+          order.tags?.some((ot) => selectedTags.includes(ot.tag_id))
 
-    return matchesSearch && matchesStatus && matchesStage && matchesTags
-  })
+        return matchesSearch && matchesStatus && matchesStage && matchesTags
+      })
+    : orders
 
   if (filteredOrders.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No orders found</p>
+        <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
     )
   }
@@ -63,7 +75,7 @@ export default function OrdersList({ orders }: OrdersListProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Order #</TableHead>
-            <TableHead>Client</TableHead>
+            {!hideClientColumn && <TableHead>Client</TableHead>}
             <TableHead>Status</TableHead>
             <TableHead>Stage</TableHead>
             <TableHead>Dates</TableHead>
@@ -77,7 +89,7 @@ export default function OrdersList({ orders }: OrdersListProps) {
           {filteredOrders.map((order) => (
             <TableRow key={order.id}>
               <TableCell className="font-mono font-medium">{order.order_number}</TableCell>
-              <TableCell>{order.client?.name || '—'}</TableCell>
+              {!hideClientColumn && <TableCell>{order.client?.name || '—'}</TableCell>}
               <TableCell>
                 <Badge
                   style={{ backgroundColor: order.status?.color || '#3B82F6' }}

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
 import WhatsAppPhoneLink from '@/components/shared/whatsapp-phone-link'
+import OrdersList from '@/components/orders/OrdersList'
 import ClientModal from './ClientModal'
 
 interface ClientDetailProps {
@@ -102,25 +103,25 @@ export default function ClientDetail({ clientId }: ClientDetailProps) {
         </dl>
       </Card>
 
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Orders</h2>
-        {client.orders?.length ? (
-          <ul className="space-y-2">
-            {client.orders.map((order) => (
-              <li key={order.id}>
-                <Link
-                  to={`/orders/${order.id}`}
-                  className="text-primary hover:underline font-mono"
-                >
-                  {order.order_number}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-muted-foreground">No orders for this client yet.</p>
-        )}
-      </Card>
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">
+          Orders
+          {client.orders?.length ? (
+            <span className="text-muted-foreground font-normal ml-2">
+              ({client.orders.length})
+            </span>
+          ) : null}
+        </h2>
+        <OrdersList
+          orders={[...(client.orders ?? [])].sort(
+            (a, b) =>
+              new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+          )}
+          hideClientColumn
+          applyFilters={false}
+          emptyMessage="No orders for this client yet."
+        />
+      </div>
 
       <ClientModal open={editOpen} onOpenChange={setEditOpen} client={client} />
     </div>

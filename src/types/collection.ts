@@ -27,5 +27,5 @@ export type OrderDetail = OrderWithRelations & {
 };
 
 export type ClientWithOrders = Client & {
-  orders: Order[];
+  orders: OrderWithRelations[];
 };

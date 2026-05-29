@@ -3,6 +3,16 @@ import { supabase } from '@/lib/supabase/client'
 import type { TablesInsert, TablesUpdate } from '@/types/supabase'
 import type { ClientWithOrders } from '@/types/collection'
 
+const CLIENT_ORDERS_SELECT = `
+  *,
+  orders(
+    *,
+    status:statuses(*),
+    stage:stages(*),
+    tags:order_tags(tag:tags(*))
+  )
+`
+
 type ClientInsert = TablesInsert<'clients'>
 type ClientUpdate = TablesUpdate<'clients'>
 
@@ -27,7 +37,7 @@ export function useClient(clientId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('clients')
-        .select('*, orders(*)')
+        .select(CLIENT_ORDERS_SELECT)
         .eq('id', clientId)
         .single()
 
