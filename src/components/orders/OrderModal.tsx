@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -27,6 +27,9 @@ import {
 import CustomInput from '../shared/custom-input'
 import CustomSelect from '../shared/custom-select'
 import CustomTextarea from '../shared/custom-textarea'
+
+const STEP_LABELS = ['Client', 'Order details', 'Notes'] as const
+const TOTAL_STEPS = STEP_LABELS.length
 
 const orderFormSchema = z.object({
   order_number: z.string().min(1),
@@ -58,8 +61,16 @@ const orderFormSchema = z.object({
 
 type OrderFormValues = z.infer<typeof orderFormSchema>
 
+async function validateClientStep(values: OrderFormValues): Promise<boolean> {
+  if (values.client_mode === 'existing') {
+    return Boolean(values.client_id)
+  }
+  return Boolean(values.client_name?.trim())
+}
+
 export default function OrderModal() {
   const { isOrderModalOpen, setOrderModalOpen } = useUIStore()
+  const [step, setStep] = useState(1)
   const createOrder = useCreateOrder()
   const createClient = useCreateClient()
   const { data: clients = [] } = useClients()
@@ -86,7 +97,7 @@ export default function OrderModal() {
       total_cost: null,
       method_of_contact: '',
       notes: '',
-      same_as_client_address: false,
+      same_as_client_address: true,
     },
   })
 
@@ -108,6 +119,7 @@ export default function OrderModal() {
 
   useEffect(() => {
     if (isOrderModalOpen) {
+      setStep(1)
       form.reset({
         order_number: `ORD-${Date.now()}`,
         client_mode: 'new',
@@ -126,12 +138,33 @@ export default function OrderModal() {
         total_cost: null,
         method_of_contact: '',
         notes: '',
-        same_as_client_address: false,
+        same_as_client_address: true,
       })
     }
   }, [isOrderModalOpen, form, statuses, stages])
 
   const isSubmitting = createClient.isPending || createOrder.isPending
+
+  const goToNextStep = async () => {
+    if (step === 1) {
+      const values = form.getValues()
+      const valid = await validateClientStep(values)
+      if (!valid) {
+        if (values.client_mode === 'existing') {
+          form.setError('client_id', { message: 'Select a client' })
+        } else {
+          form.setError('client_name', { message: 'Client name is required' })
+        }
+        return
+      }
+      form.clearErrors(['client_id', 'client_name'])
+    }
+    setStep((current) => Math.min(current + 1, TOTAL_STEPS))
+  }
+
+  const goToPreviousStep = () => {
+    setStep((current) => Math.max(current - 1, 1))
+  }
 
   const onSubmit = async (values: OrderFormValues) => {
     try {
@@ -166,6 +199,7 @@ export default function OrderModal() {
 
       toast.success('Order created')
       setOrderModalOpen(false)
+      setStep(1)
       form.reset()
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create order')
@@ -173,166 +207,237 @@ export default function OrderModal() {
     }
   }
 
+  const handleOpenChange = (open: boolean) => {
+    setOrderModalOpen(open)
+    if (!open) setStep(1)
+  }
+
   return (
-    <Dialog open={isOrderModalOpen} onOpenChange={setOrderModalOpen}>
+    <Dialog open={isOrderModalOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Order</DialogTitle>
-          <DialogDescription>Fill in the details below to create a new order.</DialogDescription>
+          <DialogDescription>
+            Step {step} of {TOTAL_STEPS}: {STEP_LABELS[step - 1]}
+          </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <CustomSelect<OrderFormValues>
-                name="client_mode"
-                label="Client"
-                placeholder="Select client type"
-                className="md:col-span-2"
-                options={[
-                  { value: 'new', label: 'New client' },
-                  { value: 'existing', label: 'Existing client' },
-                ]}
-              />
-
-              {clientMode === 'existing' ? (
-                <CustomSelect<OrderFormValues>
-                  name="client_id"
-                  label="Select Client"
-                  placeholder="Choose a client"
-                  className="md:col-span-2"
-                  options={clients.map((client) => ({
-                    value: client.id,
-                    label: client.name || 'Unnamed',
-                  }))}
+        <div className="flex gap-2" aria-hidden>
+          {STEP_LABELS.map((label, index) => {
+            const stepNumber = index + 1
+            const isActive = stepNumber === step
+            const isComplete = stepNumber < step
+            return (
+              <div key={label} className="flex flex-1 flex-col gap-1">
+                <div
+                  className={`h-1 rounded-full transition-colors ${isActive || isComplete ? 'bg-primary' : 'bg-muted'
+                    }`}
                 />
-              ) : (
-                <>
-                  <div className="md:col-span-2">
+                <span
+                  className={`text-xs ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`}
+                >
+                  {label}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+
+        <Form {...form}>
+          <form
+            className="space-y-4"
+            onSubmit={(e) => e.preventDefault()}
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter' || step === TOTAL_STEPS) return
+              const target = e.target as HTMLElement
+              if (target.tagName === 'TEXTAREA') return
+              e.preventDefault()
+            }}
+          >
+            {step === 1 && (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <CustomSelect<OrderFormValues>
+                  name="client_mode"
+                  label="Client"
+                  placeholder="Select client type"
+                  className="md:col-span-2"
+                  options={[
+                    { value: 'new', label: 'New client' },
+                    { value: 'existing', label: 'Existing client' },
+                  ]}
+                />
+
+                {clientMode === 'existing' ? (
+                  <CustomSelect<OrderFormValues>
+                    name="client_id"
+                    label="Select Client"
+                    placeholder="Choose a client"
+                    className="md:col-span-2"
+                    options={clients.map((client) => ({
+                      value: client.id,
+                      label: client.name || 'Unnamed',
+                    }))}
+                  />
+                ) : (
+                  <>
+                    <div className="md:col-span-2">
+                      <CustomInput<OrderFormValues>
+                        name="client_name"
+                        label="Client Name"
+                        placeholder="Enter client name"
+                      />
+                    </div>
                     <CustomInput<OrderFormValues>
-                      name="client_name"
-                      label="Client Name"
-                      placeholder="Enter client name"
+                      name="client_phone"
+                      label="Phone"
+                      type="tel"
+                      placeholder="Primary phone number"
                     />
-                  </div>
+                    <CustomInput<OrderFormValues>
+                      name="client_phone_2"
+                      label="Phone 2"
+                      type="tel"
+                      placeholder="Secondary phone (optional)"
+                    />
+                    <div className="md:col-span-2">
+                      <CustomInput<OrderFormValues>
+                        name="client_address"
+                        label="Address"
+                        placeholder="Street address, city, zip"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {step === 2 && (
+              <>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <CustomSelect<OrderFormValues>
+                    name="status_id"
+                    label="Status"
+                    placeholder="Select status"
+                    options={statuses.map((status) => ({
+                      value: status.id,
+                      label: status.name,
+                    }))}
+                  />
+
+                  <CustomSelect<OrderFormValues>
+                    name="stage_id"
+                    label="Stage"
+                    placeholder="Select stage"
+                    options={stages.map((stage) => ({
+                      value: stage.id,
+                      label: stage.name,
+                    }))}
+                  />
+
                   <CustomInput<OrderFormValues>
-                    name="client_phone"
-                    label="Phone"
-                    type="tel"
-                    placeholder="Primary phone number"
+                    name="deposit"
+                    label="Deposit"
+                    type="number"
+                    placeholder="0.00"
                   />
                   <CustomInput<OrderFormValues>
-                    name="client_phone_2"
-                    label="Phone 2"
-                    type="tel"
-                    placeholder="Secondary phone (optional)"
+                    name="total_cost"
+                    label="Total Cost"
+                    type="number"
+                    placeholder="0.00"
                   />
-                  <div className="md:col-span-2">
-                    <CustomInput<OrderFormValues>
-                      name="client_address"
-                      label="Address"
-                      placeholder="Street address, city, zip"
-                    />
-                  </div>
-                </>
-              )}
 
-              <CustomSelect<OrderFormValues>
-                name="status_id"
-                label="Status"
-                placeholder="Select status"
-                options={statuses.map((status) => ({
-                  value: status.id,
-                  label: status.name,
-                }))}
+                  <CustomInput<OrderFormValues>
+                    name="start_date"
+                    label="Start Date"
+                    type="date"
+                  />
+                  <CustomInput<OrderFormValues>
+                    name="end_date"
+                    label="End Date"
+                    type="date"
+                  />
+                  <CustomInput<OrderFormValues>
+                    name="method_of_contact"
+                    label="Method Of Contact"
+                    placeholder="phone, Instagram, WhatsApp..."
+                  />
+                </div>
+
+                <FormField
+                  name="same_as_client_address"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center gap-2 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => field.onChange(checked === true)}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">Same as client address</FormLabel>
+                    </FormItem>
+                  )}
+                />
+
+                <CustomTextarea<OrderFormValues>
+                  name="delivery_address"
+                  label="Delivery Address"
+                  placeholder="Enter delivery address"
+                  rows={3}
+                  className="min-h-20 resize-y"
+                  disabled={sameAsClientAddress}
+                />
+
+                <CustomTextarea<OrderFormValues>
+                  name="description"
+                  label="Description"
+                  placeholder="Order details, items, specifications..."
+                />
+              </>
+            )}
+
+            {step === 3 && (
+              <CustomTextarea<OrderFormValues>
+                name="notes"
+                label="Notes"
+                placeholder="Internal notes (optional)"
+                rows={6}
+                className="min-h-32 resize-y"
               />
+            )}
 
-              <CustomSelect<OrderFormValues>
-                name="stage_id"
-                label="Stage"
-                placeholder="Select stage"
-                options={stages.map((stage) => ({
-                  value: stage.id,
-                  label: stage.name,
-                }))}
-              />
-
-              <CustomInput<OrderFormValues>
-                name="deposit"
-                label="Deposit"
-                type="number"
-                placeholder="0.00"
-              />
-              <CustomInput<OrderFormValues>
-                name="total_cost"
-                label="Total Cost"
-                type="number"
-                placeholder="0.00"
-              />
-              <CustomInput<OrderFormValues>
-                name="method_of_contact"
-                label="Method Of Contact"
-                placeholder="phone, Instagram, WhatsApp..."
-              />
-              <CustomInput<OrderFormValues>
-                name="start_date"
-                label="Start Date"
-                type="date"
-              />
-              <CustomInput<OrderFormValues>
-                name="end_date"
-                label="End Date"
-                type="date"
-              />
-            </div>
-
-            <FormField
-              name="same_as_client_address"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={(checked) => field.onChange(checked === true)}
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">Same as client address</FormLabel>
-                </FormItem>
-              )}
-            />
-
-            <CustomTextarea<OrderFormValues>
-              name="delivery_address"
-              label="Delivery Address"
-              placeholder="Enter delivery address"
-              rows={3}
-              className="min-h-20 resize-y"
-              disabled={sameAsClientAddress}
-            />
-
-            <CustomTextarea<OrderFormValues>
-              name="description"
-              label="Description"
-              placeholder="Order details, items, specifications..."
-            />
-
-            <CustomTextarea<OrderFormValues>
-              name="notes"
-              label="Notes"
-              placeholder="Internal notes (optional)"
-            />
-
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOrderModalOpen(false)}>
+            <DialogFooter className="gap-2 ">
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {createClient.isPending
-                  ? 'Creating client...'
-                  : createOrder.isPending
-                    ? 'Creating order...'
-                    : 'Create Order'}
-              </Button>
+              {step > 1 && (
+                <Button type="button" variant="outline" onClick={goToPreviousStep} disabled={isSubmitting}>
+                  Back
+                </Button>
+              )}
+              {step < TOTAL_STEPS ? (
+                <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    goToNextStep()
+                  }}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => void form.handleSubmit(onSubmit)()}
+                >
+                  {createClient.isPending
+                    ? 'Creating client...'
+                    : createOrder.isPending
+                      ? 'Creating order...'
+                      : 'Create Order'}
+                </Button>
+              )}
             </DialogFooter>
           </form>
         </Form>
