@@ -13,16 +13,13 @@ import {
 } from '@/components/ui/table'
 import { ArrowRight } from 'lucide-react'
 import type { OrderWithRelations } from '@/types/collection'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 
 interface OrdersListProps {
   orders: OrderWithRelations[]
   hideClientColumn?: boolean
   applyFilters?: boolean
   emptyMessage?: string
-}
-
-function formatCurrency(value: number | null | undefined): string {
-  return value != null ? `$${value.toFixed(2)}` : '—'
 }
 
 function formatDateRange(order: OrderWithRelations): string {
