@@ -69,7 +69,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
     deposit: 0,
     total_cost: 0,
     shipping_price: 0,
-    shipping_included_in_total: false,
+    shipping_paid: false,
     start_date: '',
     end_date: '',
     method_of_contact: '',
@@ -90,7 +90,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
         deposit: order.deposit || 0,
         total_cost: order.total_cost || 0,
         shipping_price: order.shipping_price || 0,
-        shipping_included_in_total: order.shipping_included_in_total ?? false,
+        shipping_paid: order.shipping_paid ?? false,
         start_date: order.start_date || '',
         end_date: order.end_date || '',
         method_of_contact: order.method_of_contact || '',
@@ -347,14 +347,14 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
             <div className="flex items-end">
               <label className="flex items-center gap-2 cursor-pointer pb-2">
                 <Checkbox
-                  checked={orderData.shipping_included_in_total}
+                  checked={orderData.shipping_paid}
                   onCheckedChange={(checked) => {
                     const value = checked === true
-                    setOrderData((p) => ({ ...p, shipping_included_in_total: value }))
-                    handleOrderFieldUpdate('shipping_included_in_total', value)
+                    setOrderData((p) => ({ ...p, shipping_paid: value }))
+                    handleOrderFieldUpdate('shipping_paid', value)
                   }}
                 />
-                <span className="text-sm">Shipping included in total</span>
+                <span className="text-sm">Shipping paid</span>
               </label>
             </div>
           </div>

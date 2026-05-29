@@ -166,7 +166,7 @@ export type Database = {
           method_of_contact: string | null
           notes: string | null
           order_number: string
-          shipping_included_in_total: boolean
+          shipping_paid: boolean
           shipping_price: number | null
           stage_id: string | null
           start_date: string | null
@@ -186,7 +186,7 @@ export type Database = {
           method_of_contact?: string | null
           notes?: string | null
           order_number: string
-          shipping_included_in_total?: boolean
+          shipping_paid?: boolean
           shipping_price?: number | null
           stage_id?: string | null
           start_date?: string | null
@@ -206,7 +206,7 @@ export type Database = {
           method_of_contact?: string | null
           notes?: string | null
           order_number?: string
-          shipping_included_in_total?: boolean
+          shipping_paid?: boolean
           shipping_price?: number | null
           stage_id?: string | null
           start_date?: string | null

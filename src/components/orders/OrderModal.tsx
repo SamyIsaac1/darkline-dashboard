@@ -49,7 +49,7 @@ const orderFormSchema = z.object({
   deposit: z.number().nullable().optional(),
   total_cost: z.number().nullable().optional(),
   shipping_price: z.number().nullable().optional(),
-  shipping_included_in_total: z.boolean().optional(),
+  shipping_paid: z.boolean().optional(),
   method_of_contact: z.string().optional(),
   notes: z.string().optional(),
   same_as_client_address: z.boolean().optional(),
@@ -99,7 +99,7 @@ export default function OrderModal() {
       deposit: null,
       total_cost: null,
       shipping_price: null,
-      shipping_included_in_total: false,
+      shipping_paid: false,
       method_of_contact: '',
       notes: '',
       same_as_client_address: true,
@@ -142,7 +142,7 @@ export default function OrderModal() {
         deposit: null,
         total_cost: null,
         shipping_price: null,
-        shipping_included_in_total: false,
+        shipping_paid: false,
         method_of_contact: '',
         notes: '',
         same_as_client_address: true,
@@ -200,7 +200,7 @@ export default function OrderModal() {
         deposit: values.deposit ?? null,
         total_cost: values.total_cost ?? null,
         shipping_price: values.shipping_price ?? null,
-        shipping_included_in_total: values.shipping_included_in_total ?? false,
+        shipping_paid: values.shipping_paid ?? false,
         method_of_contact: values.method_of_contact || null,
         notes: values.notes || null,
         client_id: clientId,
@@ -363,7 +363,7 @@ export default function OrderModal() {
                   />
 
                   <FormField
-                    name="shipping_included_in_total"
+                    name="shipping_paid"
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-end gap-2 space-y-0 md:col-span-2">
                         <FormControl>
@@ -373,7 +373,7 @@ export default function OrderModal() {
                           />
                         </FormControl>
                         <FormLabel className="font-normal pb-0.5">
-                          Shipping included in total
+                          Shipping paid
                         </FormLabel>
                       </FormItem>
                     )}
