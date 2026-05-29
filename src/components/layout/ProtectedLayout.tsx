@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import Header from './Header'
-import Sidebar from './Sidebar'
+import AppSidebar from './Sidebar'
 import { Spinner } from '@/components/ui/spinner'
 
 export default function ProtectedLayout() {
@@ -42,14 +43,14 @@ export default function ProtectedLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
         <Header />
-        <main className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto">
           <Outlet />
-        </main>
-      </div>
-    </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

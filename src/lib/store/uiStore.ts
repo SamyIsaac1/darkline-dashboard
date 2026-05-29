@@ -5,10 +5,6 @@ interface UIState {
   viewMode: 'grid' | 'kanban' | 'list'
   setViewMode: (mode: 'grid' | 'kanban' | 'list') => void
 
-  // Sidebar
-  sidebarOpen: boolean
-  setSidebarOpen: (open: boolean) => void
-
   // Filters
   selectedStatus: string | null
   setSelectedStatus: (status: string | null) => void
@@ -39,9 +35,6 @@ interface UIState {
 export const useUIStore = create<UIState>((set) => ({
   viewMode: 'grid',
   setViewMode: (mode) => set({ viewMode: mode }),
-
-  sidebarOpen: true,
-  setSidebarOpen: (open) => set({ sidebarOpen: open }),
 
   selectedStatus: null,
   setSelectedStatus: (status) => set({ selectedStatus: status }),

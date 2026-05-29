@@ -1,7 +1,17 @@
 import { Link, useLocation } from 'react-router-dom'
 import { LayoutDashboard, ListTodo, Users, Settings } from 'lucide-react'
-import { useUIStore } from '@/lib/store/uiStore'
-import { cn } from '@/lib/utils'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from '@/components/ui/sidebar'
 
 const navItems = [
   {
@@ -21,60 +31,79 @@ const navItems = [
   },
 ]
 
-export default function Sidebar() {
+const activeMenuClass =
+  'data-[active=true]:bg-primary data-[active=true]:text-primary-foreground hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground'
+
+export default function AppSidebar() {
   const location = useLocation()
-  const { sidebarOpen } = useUIStore()
 
   return (
-    <aside
-      className={cn(
-        'w-64 border-r border-border bg-background transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col',
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full fixed left-0 top-0 h-screen z-50 lg:static'
-      )}
-    >
-      <div className="p-6 border-b border-border">
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <img src="/logo-horizontal.svg" alt="Logo" />
-        </h2>
-      </div>
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild tooltip="DarkLine">
+              <Link to="/dashboard">
+                <img
+                  src="/logo-horizontal.svg"
+                  alt="DarkLine"
+                  className="h-6 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:scale-95"
+                />
+                <LayoutDashboard className="hidden size-4 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:block" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-      <nav className="flex-1 p-4 space-y-2">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = location.pathname.startsWith(item.href)
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const Icon = item.icon
+                const isActive = location.pathname.startsWith(item.href)
 
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
-                isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-foreground hover:bg-accent'
-              )}
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.label}
+                      className={activeMenuClass}
+                    >
+                      <Link to={item.href}>
+                        <Icon />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname.startsWith('/settings')}
+              tooltip="Settings"
+              className={activeMenuClass}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
-            </Link>
-          )
-        })}
-      </nav>
+              <Link to="/settings">
+                <Settings />
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
 
-      <div className="p-4 border-t border-border">
-        <Link
-          to="/settings"
-          className={cn(
-            'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
-            location.pathname.startsWith('/settings')
-              ? 'bg-primary text-primary-foreground'
-              : 'text-foreground hover:bg-accent'
-          )}
-        >
-          <Settings className="w-5 h-5" />
-          <span className="font-medium">Settings</span>
-        </Link>
-      </div>
-    </aside>
+      <SidebarRail />
+    </Sidebar>
   )
 }
