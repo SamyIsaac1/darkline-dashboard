@@ -301,7 +301,7 @@ export default function OrderModal() {
                       placeholder="Secondary phone (optional)"
                     />
                     <div className="md:col-span-2">
-                      <CustomInput<OrderFormValues>
+                      <CustomTextarea<OrderFormValues>
                         name="client_address"
                         label="Address"
                         placeholder="Street address, city, zip"

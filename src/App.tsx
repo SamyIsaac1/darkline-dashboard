@@ -9,7 +9,7 @@ export default function App() {
     <ReactQueryProvider>
       <RouterProvider router={router} />
       <DeleteConfirmDialog />
-      <Toaster />
+      <Toaster richColors duration={3000} closeButton theme='dark' />
     </ReactQueryProvider>
   )
 }

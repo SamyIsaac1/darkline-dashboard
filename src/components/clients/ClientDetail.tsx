@@ -98,7 +98,7 @@ export default function ClientDetail({ clientId }: ClientDetailProps) {
           </div>
           <div className="sm:col-span-2">
             <dt className="text-sm text-muted-foreground">Address</dt>
-            <dd className="font-medium">{client.address || '—'}</dd>
+            <dd className="font-medium whitespace-pre-wrap">{client.address || '—'}</dd>
           </div>
         </dl>
       </Card>

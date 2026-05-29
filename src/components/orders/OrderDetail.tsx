@@ -400,8 +400,9 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                   <MapPin className="w-4 h-4" />
                   Address
                 </Label>
-                <Input
+                <Textarea
                   className="mt-2"
+                  rows={3}
                   value={clientData.address}
                   onChange={(e) => setClientData((p) => ({ ...p, address: e.target.value }))}
                   onBlur={(e) => handleClientFieldUpdate('address', e.target.value)}

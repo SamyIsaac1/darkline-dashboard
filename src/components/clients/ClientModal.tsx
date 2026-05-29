@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { Form } from '@/components/ui/form'
 import CustomInput from '@/components/shared/custom-input'
+import CustomTextarea from '@/components/shared/custom-textarea'
 import { Loader2 } from 'lucide-react'
 
 const clientSchema = z.object({
@@ -90,7 +91,7 @@ export default function ClientModal({ open, onOpenChange, client }: ClientModalP
             <CustomInput name="name" label="Name" />
             <CustomInput name="phone" label="Phone" type="tel" />
             <CustomInput name="phone_2" label="Phone 2" type="tel" />
-            <CustomInput name="address" label="Address" />
+            <CustomTextarea name="address" label="Address" placeholder="Street address, city, zip" />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
