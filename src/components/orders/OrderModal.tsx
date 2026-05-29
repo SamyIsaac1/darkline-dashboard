@@ -188,6 +188,7 @@ export default function OrderModal() {
                 control={form.control}
                 name="client_mode"
                 label="Client"
+                placeholder="Select client type"
                 className="md:col-span-2"
                 options={[
                   { value: 'new', label: 'New client' },
@@ -214,6 +215,7 @@ export default function OrderModal() {
                       control={form.control}
                       name="client_name"
                       label="Client Name"
+                      placeholder="Enter client name"
                     />
                   </div>
                   <CustomInput<OrderFormValues>
@@ -221,18 +223,21 @@ export default function OrderModal() {
                     name="client_phone"
                     label="Phone"
                     type="tel"
+                    placeholder="Primary phone number"
                   />
                   <CustomInput<OrderFormValues>
                     control={form.control}
                     name="client_phone_2"
                     label="Phone 2"
                     type="tel"
+                    placeholder="Secondary phone (optional)"
                   />
                   <div className="md:col-span-2">
                     <CustomInput<OrderFormValues>
                       control={form.control}
                       name="client_address"
                       label="Address"
+                      placeholder="Street address, city, zip"
                     />
                   </div>
                 </>
@@ -260,23 +265,39 @@ export default function OrderModal() {
                 }))}
               />
 
-              <CustomInput<OrderFormValues> control={form.control} name="deposit" label="Deposit" type="number" />
-              <CustomInput<OrderFormValues> control={form.control} name="total_cost" label="Total Cost" type="number" />
-              <CustomInput<OrderFormValues> control={form.control} name="method_of_contact" label="Method Of Contact" />
-              <CustomInput<OrderFormValues> control={form.control} name="start_date" label="Start Date" type="date" />
-              <CustomInput<OrderFormValues> control={form.control} name="end_date" label="End Date" type="date" />
+              <CustomInput<OrderFormValues>
+                control={form.control}
+                name="deposit"
+                label="Deposit"
+                type="number"
+                placeholder="0.00"
+              />
+              <CustomInput<OrderFormValues>
+                control={form.control}
+                name="total_cost"
+                label="Total Cost"
+                type="number"
+                placeholder="0.00"
+              />
+              <CustomInput<OrderFormValues>
+                control={form.control}
+                name="method_of_contact"
+                label="Method Of Contact"
+                placeholder="phone, Instagram, WhatsApp..."
+              />
+              <CustomInput<OrderFormValues>
+                control={form.control}
+                name="start_date"
+                label="Start Date"
+                type="date"
+              />
+              <CustomInput<OrderFormValues>
+                control={form.control}
+                name="end_date"
+                label="End Date"
+                type="date"
+              />
             </div>
-
-
-
-            <CustomTextarea<OrderFormValues>
-              control={form.control}
-              name="delivery_address"
-              label="Delivery Address"
-              rows={3}
-              className="min-h-20 resize-y"
-              disabled={sameAsClientAddress}
-            />
 
             <FormField
               control={form.control}
@@ -293,16 +314,29 @@ export default function OrderModal() {
                 </FormItem>
               )}
             />
+
+            <CustomTextarea<OrderFormValues>
+              control={form.control}
+              name="delivery_address"
+              label="Delivery Address"
+              placeholder="Enter delivery address"
+              rows={3}
+              className="min-h-20 resize-y"
+              disabled={sameAsClientAddress}
+            />
+
             <CustomTextarea<OrderFormValues>
               control={form.control}
               name="description"
               label="Description"
+              placeholder="Order details, items, specifications..."
             />
 
             <CustomTextarea<OrderFormValues>
               control={form.control}
               name="notes"
               label="Notes"
+              placeholder="Internal notes (optional)"
             />
 
             <DialogFooter>

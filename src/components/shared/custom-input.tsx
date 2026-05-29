@@ -14,11 +14,12 @@ type CustomInputProps<
   name: Path<T>
   label: string
   type?: string
+  placeholder?: string
 }
 
 export default function CustomInput<
   T extends FieldValues
->({ control, name, label, type = 'text' }: CustomInputProps<T>) {
+>({ control, name, label, type = 'text', placeholder }: CustomInputProps<T>) {
   return <FormField
     control={control}
     name={name}
@@ -32,6 +33,7 @@ export default function CustomInput<
           <Input
             {...field}
             type={type}
+            placeholder={placeholder}
             {...(type === 'number'
               ? {
                   value: field.value ?? '',
