@@ -48,6 +48,8 @@ const orderFormSchema = z.object({
   end_date: z.string().nullable().optional(),
   deposit: z.number().nullable().optional(),
   total_cost: z.number().nullable().optional(),
+  shipping_price: z.number().nullable().optional(),
+  shipping_included_in_total: z.boolean().optional(),
   method_of_contact: z.string().optional(),
   notes: z.string().optional(),
   same_as_client_address: z.boolean().optional(),
@@ -96,6 +98,8 @@ export default function OrderModal() {
       end_date: null,
       deposit: null,
       total_cost: null,
+      shipping_price: null,
+      shipping_included_in_total: false,
       method_of_contact: '',
       notes: '',
       same_as_client_address: true,
@@ -137,6 +141,8 @@ export default function OrderModal() {
         end_date: null,
         deposit: null,
         total_cost: null,
+        shipping_price: null,
+        shipping_included_in_total: false,
         method_of_contact: '',
         notes: '',
         same_as_client_address: true,
@@ -193,6 +199,8 @@ export default function OrderModal() {
         end_date: values.end_date?.trim() || null,
         deposit: values.deposit ?? null,
         total_cost: values.total_cost ?? null,
+        shipping_price: values.shipping_price ?? null,
+        shipping_included_in_total: values.shipping_included_in_total ?? false,
         method_of_contact: values.method_of_contact || null,
         notes: values.notes || null,
         client_id: clientId,
@@ -346,6 +354,29 @@ export default function OrderModal() {
                     label="Total Cost"
                     type="number"
                     placeholder="0.00"
+                  />
+                  <CustomInput<OrderFormValues>
+                    name="shipping_price"
+                    label="Shipping Price"
+                    type="number"
+                    placeholder="0.00"
+                  />
+
+                  <FormField
+                    name="shipping_included_in_total"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-end gap-2 space-y-0 md:col-span-2">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(checked) => field.onChange(checked === true)}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal pb-0.5">
+                          Shipping included in total
+                        </FormLabel>
+                      </FormItem>
+                    )}
                   />
 
                   <CustomInput<OrderFormValues>

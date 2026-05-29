@@ -25,6 +25,7 @@ import {
   MessageCircle,
   Loader2,
 } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
   SelectTrigger,
@@ -67,6 +68,8 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
     delivery_address: '',
     deposit: 0,
     total_cost: 0,
+    shipping_price: 0,
+    shipping_included_in_total: false,
     start_date: '',
     end_date: '',
     method_of_contact: '',
@@ -86,6 +89,8 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
         delivery_address: order.delivery_address || '',
         deposit: order.deposit || 0,
         total_cost: order.total_cost || 0,
+        shipping_price: order.shipping_price || 0,
+        shipping_included_in_total: order.shipping_included_in_total ?? false,
         start_date: order.start_date || '',
         end_date: order.end_date || '',
         method_of_contact: order.method_of_contact || '',
@@ -93,7 +98,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
     }
   }, [order])
 
-  const handleOrderFieldUpdate = async (field: string, value: string | number | null) => {
+  const handleOrderFieldUpdate = async (
+    field: string,
+    value: string | number | boolean | null,
+  ) => {
     setOrderData((prev) => ({ ...prev, [field]: value }))
     await updateOrder.mutateAsync({ id: orderId, [field]: value })
   }
@@ -319,6 +327,35 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                 onChange={(e) => setOrderData((p) => ({ ...p, total_cost: Number(e.target.value) }))}
                 onBlur={(e) => handleOrderFieldUpdate('total_cost', Number(e.target.value) || null)}
               />
+            </div>
+
+            <div>
+              <Label className="text-sm text-muted-foreground">Shipping Price</Label>
+              <Input
+                type="number"
+                className="mt-2"
+                value={orderData.shipping_price}
+                onChange={(e) =>
+                  setOrderData((p) => ({ ...p, shipping_price: Number(e.target.value) }))
+                }
+                onBlur={(e) =>
+                  handleOrderFieldUpdate('shipping_price', Number(e.target.value) || null)
+                }
+              />
+            </div>
+
+            <div className="flex items-end">
+              <label className="flex items-center gap-2 cursor-pointer pb-2">
+                <Checkbox
+                  checked={orderData.shipping_included_in_total}
+                  onCheckedChange={(checked) => {
+                    const value = checked === true
+                    setOrderData((p) => ({ ...p, shipping_included_in_total: value }))
+                    handleOrderFieldUpdate('shipping_included_in_total', value)
+                  }}
+                />
+                <span className="text-sm">Shipping included in total</span>
+              </label>
             </div>
           </div>
 
