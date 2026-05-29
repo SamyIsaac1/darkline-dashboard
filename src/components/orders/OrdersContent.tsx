@@ -4,10 +4,11 @@ import { useStatuses, useStages, useTags } from '@/lib/hooks/useReferenceData'
 import { useUIStore } from '@/lib/store/uiStore'
 import { Button } from '@/components/ui/button'
 import OrdersGrid from '@/components/orders/OrdersGrid'
+import OrdersList from '@/components/orders/OrdersList'
 import KanbanBoard from '@/components/orders/KanbanBoard'
 import OrdersFilter from '@/components/orders/OrdersFilter'
 import OrderModal from '@/components/orders/OrderModal'
-import { Kanban, LayoutGrid, Plus } from 'lucide-react'
+import { Kanban, LayoutGrid, List, Plus } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
 
 export default function OrdersContent() {
@@ -16,8 +17,7 @@ export default function OrdersContent() {
   const { data: stages } = useStages()
   const { data: tags } = useTags()
 
-  const { viewMode, setViewMode, isOrderModalOpen, setOrderModalOpen } =
-    useUIStore()
+  const { viewMode, setViewMode, setOrderModalOpen } = useUIStore()
 
   if (isLoading) {
     return (
@@ -47,6 +47,13 @@ export default function OrdersContent() {
             >
               <Kanban className="w-4 h-4" />
             </Button>
+            <Button
+              size="sm"
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              onClick={() => setViewMode('list')}
+            >
+              <List className="w-4 h-4" />
+            </Button>
           </div>
           <Button onClick={() => setOrderModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
@@ -61,17 +68,15 @@ export default function OrdersContent() {
         tags={tags || []}
       />
 
-      {viewMode === 'grid' ? (
-        <OrdersGrid
-          orders={orders || []}
-        />
-      ) : (
+      {viewMode === 'grid' && <OrdersGrid orders={orders || []} />}
+      {viewMode === 'kanban' && (
         <KanbanBoard
           orders={orders || []}
           stages={stages || []}
           statuses={statuses || []}
         />
       )}
+      {viewMode === 'list' && <OrdersList orders={orders || []} />}
 
       <OrderModal />
     </div>

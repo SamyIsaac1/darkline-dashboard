@@ -115,16 +115,18 @@ export default function SettingsContent() {
                   description: (data.description as string) || null,
                 })
               }}
-              onUpdate={(id, data) =>
-                updateStage.mutateAsync({
+              onUpdate={async (id, data) => {
+                await updateStage.mutateAsync({
                   id,
                   name: data.name as string,
                   color: (data.color as string) || null,
                   position: (data.position as number) ?? null,
                   description: (data.description as string) || null,
                 })
-              }
-              onDelete={(id) => deleteStage.mutateAsync(id)}
+              }}
+              onDelete={async (id) => {
+                await deleteStage.mutateAsync(id)
+              }}
             />
           </Card>
         </TabsContent>
@@ -141,15 +143,17 @@ export default function SettingsContent() {
                   position: (data.position as number) ?? null,
                 })
               }}
-              onUpdate={(id, data) =>
-                updateStatus.mutateAsync({
+              onUpdate={async (id, data) => {
+                await updateStatus.mutateAsync({
                   id,
                   name: data.name as string,
                   color: (data.color as string) || null,
                   position: (data.position as number) ?? null,
                 })
-              }
-              onDelete={(id) => deleteStatus.mutateAsync(id)}
+              }}
+              onDelete={async (id) => {
+                await deleteStatus.mutateAsync(id)
+              }}
             />
           </Card>
         </TabsContent>
@@ -166,14 +170,16 @@ export default function SettingsContent() {
                   color: (data.color as string) || null,
                 })
               }}
-              onUpdate={(id, data) =>
-                updateTag.mutateAsync({
+              onUpdate={async (id, data) => {
+                await updateTag.mutateAsync({
                   id,
                   name: data.name as string,
                   color: (data.color as string) || null,
                 })
-              }
-              onDelete={(id) => deleteTag.mutateAsync(id)}
+              }}
+              onDelete={async (id) => {
+                await deleteTag.mutateAsync(id)
+              }}
             />
           </Card>
         </TabsContent>

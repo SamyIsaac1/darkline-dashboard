@@ -1,4 +1,4 @@
-import ClientsContent from '@/components/clients/ClientsContent'
+import { ClientsContent } from '@/components/clients'
 
 export default function ClientsPage() {
   return <ClientsContent />

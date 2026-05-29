@@ -32,7 +32,20 @@ export default function CustomInput<
           <Input
             {...field}
             type={type}
-            {...(type === 'number' ? { onChange: (e) => field.onChange(Number(e.target.value.replace(/[^0-9]/g, ''))) } : {})}
+            {...(type === 'number'
+              ? {
+                  value: field.value ?? '',
+                  onChange: (e) => {
+                    const raw = e.target.value.replace(/[^0-9.]/g, '')
+                    field.onChange(raw === '' ? null : Number(raw))
+                  },
+                }
+              : type === 'date'
+                ? {
+                    value: field.value ?? '',
+                    onChange: (e) => field.onChange(e.target.value || null),
+                  }
+                : {})}
           />
         </FormControl>
         <FormMessage />
