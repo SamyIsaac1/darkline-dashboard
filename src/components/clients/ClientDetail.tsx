@@ -60,7 +60,7 @@ export default function ClientDetail({ clientId }: ClientDetailProps) {
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold">{client.name || 'Unnamed'}</h1>
+          <h1 className="text-3xl font-bold capitalize">{client.name || 'Unnamed'}</h1>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setEditOpen(true)}>
