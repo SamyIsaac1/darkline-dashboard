@@ -47,9 +47,13 @@ export default function AppSidebar() {
                 <img
                   src="/logo-horizontal.svg"
                   alt="DarkLine"
-                  className="h-6 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:scale-95"
+                  className="h-10 object-cover transition-all duration-300 ease-in-out group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:scale-95"
                 />
-                <LayoutDashboard className="hidden size-4 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:block" />
+                <img
+                  src="/logo-square.svg"
+                  alt="DarkLine"
+                  className="hidden size-8 mx-auto object-contain transition-all duration-300 ease-in-out group-data-[collapsible=icon]:block"
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
