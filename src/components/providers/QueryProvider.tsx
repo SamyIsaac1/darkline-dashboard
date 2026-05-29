@@ -1,7 +1,8 @@
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function ReactQueryProvider({
   children,
@@ -17,6 +18,15 @@ export default function ReactQueryProvider({
             gcTime: 1000 * 60 * 5, // 5 minutes
           },
         },
+        mutationCache: new MutationCache({
+          onError: (error) => {
+            toast.error(`Update Failed: ${error.message}`);
+          },
+          onSuccess: () => {
+            toast.success('Action successful!');
+          },
+        }),
+
       })
   )
 
