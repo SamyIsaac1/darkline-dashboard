@@ -84,10 +84,10 @@ export default function ClientModal({ open, onOpenChange, client }: ClientModalP
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <CustomInput control={form.control} name="name" label="Name" />
-            <CustomInput control={form.control} name="phone" label="Phone" type="tel" />
-            <CustomInput control={form.control} name="phone_2" label="Phone 2" type="tel" />
-            <CustomInput control={form.control} name="address" label="Address" />
+            <CustomInput name="name" label="Name" />
+            <CustomInput name="phone" label="Phone" type="tel" />
+            <CustomInput name="phone_2" label="Phone 2" type="tel" />
+            <CustomInput name="address" label="Address" />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel

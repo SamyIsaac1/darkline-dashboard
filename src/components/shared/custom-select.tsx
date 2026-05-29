@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Control, FieldValues, Path } from 'react-hook-form'
+import { FieldValues, Path, useFormContext } from 'react-hook-form'
 import {
   FormControl,
   FormField,
@@ -22,7 +22,6 @@ export type SelectOption = {
 }
 
 type CustomSelectProps<T extends FieldValues> = {
-  control: Control<T>
   name: Path<T>
   label: string
   options: SelectOption[]
@@ -31,13 +30,14 @@ type CustomSelectProps<T extends FieldValues> = {
 }
 
 export default function CustomSelect<T extends FieldValues>({
-  control,
   name,
   label,
   options,
   placeholder,
   className,
 }: CustomSelectProps<T>) {
+  const { control } = useFormContext<T>()
+
   return (
     <FormField
       control={control}
@@ -45,10 +45,7 @@ export default function CustomSelect<T extends FieldValues>({
       render={({ field }) => (
         <FormItem className={cn(className)}>
           <FormLabel>{label}</FormLabel>
-          <Select
-            value={field.value ?? ''}
-            onValueChange={field.onChange}
-          >
+          <Select value={field.value ?? ''} onValueChange={field.onChange}>
             <FormControl>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={placeholder} />

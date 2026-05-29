@@ -65,9 +65,8 @@ export default function ProfileSettingsPage() {
       <h2 className="mb-4 text-lg font-semibold">Profile</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <CustomInput control={form.control} name="company_name" label="Company Name" />
+          <CustomInput name="company_name" label="Company Name" />
           <FormField
-            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>

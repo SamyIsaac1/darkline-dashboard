@@ -1,9 +1,8 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
-import { Control, FieldValues, Path } from 'react-hook-form'
+import { FieldValues, Path, useFormContext } from 'react-hook-form'
 
 type CustomTextareaProps<T extends FieldValues> = {
-  control: Control<T>
   name: Path<T>
   label: string
   rows?: number
@@ -13,7 +12,6 @@ type CustomTextareaProps<T extends FieldValues> = {
 }
 
 export default function CustomTextarea<T extends FieldValues>({
-  control,
   name,
   label,
   rows = 3,
@@ -21,6 +19,8 @@ export default function CustomTextarea<T extends FieldValues>({
   className,
   disabled,
 }: CustomTextareaProps<T>) {
+  const { control } = useFormContext<T>()
+
   return (
     <FormField
       control={control}

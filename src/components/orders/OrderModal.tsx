@@ -185,7 +185,6 @@ export default function OrderModal() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <CustomSelect<OrderFormValues>
-                control={form.control}
                 name="client_mode"
                 label="Client"
                 placeholder="Select client type"
@@ -198,7 +197,6 @@ export default function OrderModal() {
 
               {clientMode === 'existing' ? (
                 <CustomSelect<OrderFormValues>
-                  control={form.control}
                   name="client_id"
                   label="Select Client"
                   placeholder="Choose a client"
@@ -212,21 +210,18 @@ export default function OrderModal() {
                 <>
                   <div className="md:col-span-2">
                     <CustomInput<OrderFormValues>
-                      control={form.control}
                       name="client_name"
                       label="Client Name"
                       placeholder="Enter client name"
                     />
                   </div>
                   <CustomInput<OrderFormValues>
-                    control={form.control}
                     name="client_phone"
                     label="Phone"
                     type="tel"
                     placeholder="Primary phone number"
                   />
                   <CustomInput<OrderFormValues>
-                    control={form.control}
                     name="client_phone_2"
                     label="Phone 2"
                     type="tel"
@@ -234,7 +229,6 @@ export default function OrderModal() {
                   />
                   <div className="md:col-span-2">
                     <CustomInput<OrderFormValues>
-                      control={form.control}
                       name="client_address"
                       label="Address"
                       placeholder="Street address, city, zip"
@@ -244,7 +238,6 @@ export default function OrderModal() {
               )}
 
               <CustomSelect<OrderFormValues>
-                control={form.control}
                 name="status_id"
                 label="Status"
                 placeholder="Select status"
@@ -255,7 +248,6 @@ export default function OrderModal() {
               />
 
               <CustomSelect<OrderFormValues>
-                control={form.control}
                 name="stage_id"
                 label="Stage"
                 placeholder="Select stage"
@@ -266,33 +258,28 @@ export default function OrderModal() {
               />
 
               <CustomInput<OrderFormValues>
-                control={form.control}
                 name="deposit"
                 label="Deposit"
                 type="number"
                 placeholder="0.00"
               />
               <CustomInput<OrderFormValues>
-                control={form.control}
                 name="total_cost"
                 label="Total Cost"
                 type="number"
                 placeholder="0.00"
               />
               <CustomInput<OrderFormValues>
-                control={form.control}
                 name="method_of_contact"
                 label="Method Of Contact"
                 placeholder="phone, Instagram, WhatsApp..."
               />
               <CustomInput<OrderFormValues>
-                control={form.control}
                 name="start_date"
                 label="Start Date"
                 type="date"
               />
               <CustomInput<OrderFormValues>
-                control={form.control}
                 name="end_date"
                 label="End Date"
                 type="date"
@@ -300,7 +287,6 @@ export default function OrderModal() {
             </div>
 
             <FormField
-              control={form.control}
               name="same_as_client_address"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-2 space-y-0">
@@ -316,7 +302,6 @@ export default function OrderModal() {
             />
 
             <CustomTextarea<OrderFormValues>
-              control={form.control}
               name="delivery_address"
               label="Delivery Address"
               placeholder="Enter delivery address"
@@ -326,14 +311,12 @@ export default function OrderModal() {
             />
 
             <CustomTextarea<OrderFormValues>
-              control={form.control}
               name="description"
               label="Description"
               placeholder="Order details, items, specifications..."
             />
 
             <CustomTextarea<OrderFormValues>
-              control={form.control}
               name="notes"
               label="Notes"
               placeholder="Internal notes (optional)"
