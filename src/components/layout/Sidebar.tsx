@@ -98,7 +98,7 @@ export default function AppSidebar() {
               tooltip="Settings"
               className={activeMenuClass}
             >
-              <Link to="/settings">
+              <Link to="/settings?tab=profile">
                 <Settings />
                 <span>Settings</span>
               </Link>
