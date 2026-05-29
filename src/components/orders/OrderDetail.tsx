@@ -19,13 +19,23 @@ import { Textarea } from '@/components/ui/textarea'
 import {
   ArrowLeft,
   Calendar,
+  CircleCheck,
+  CircleDot,
+  ClipboardList,
   DollarSign,
-  User,
-  Phone,
-  Trash2,
+  FileText,
+  History,
+  Layers,
+  Loader2,
   MapPin,
   MessageCircle,
-  Loader2,
+  Paperclip,
+  Phone,
+  StickyNote,
+  Trash2,
+  Truck,
+  User,
+  Wallet,
 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -219,10 +229,16 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
       <div className="flex flex-col gap-6">
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Order Details</h2>
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <ClipboardList className="w-5 h-5" />
+            Order Details
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <Label className="text-sm text-muted-foreground">Status</Label>
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                <CircleDot className="w-4 h-4" />
+                Status
+              </Label>
               <Select value={order.status_id || ''} onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-full mt-2">
                   <SelectValue placeholder="Select status" />
@@ -240,7 +256,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
             </div>
 
             <div>
-              <Label className="text-sm text-muted-foreground">Stage</Label>
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                Stage
+              </Label>
               <Select value={order.stage_id || ''} onValueChange={handleStageChange}>
                 <SelectTrigger className="w-full mt-2">
                   <SelectValue placeholder="Select stage" />
@@ -339,10 +358,24 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                 onBlur={(e) => handleOrderFieldUpdate('total_cost', Number(e.target.value) || null)}
               />
             </div>
-
             <div>
-              <div className="flex items-center justify-between gap-2">
-                <Label className="text-sm text-muted-foreground">Shipping Price</Label>
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                <Wallet className="w-4 h-4" />
+                Remaining
+              </Label>
+              <p
+                className={`mt-2 text-lg font-semibold tabular-nums ${remaining > 0 ? 'text-amber-600' : 'text-muted-foreground'
+                  }`}
+              >
+                {formatCurrency(remaining)}
+              </p>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Truck className="w-4 h-4" />
+                  Shipping Price
+                </Label>
                 {orderData.shipping_paid && (
                   <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Paid</Badge>
                 )}
@@ -370,27 +403,20 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                     handleOrderFieldUpdate('shipping_paid', value)
                   }}
                 />
-                <span className="text-sm">Shipping paid</span>
+                <span className="text-sm flex items-center gap-2">
+                  Shipping paid
+                </span>
               </label>
             </div>
 
-            <div>
-              <Label className="text-sm text-muted-foreground flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                Remaining
-              </Label>
-              <p
-                className={`mt-2 text-lg font-semibold tabular-nums ${
-                  remaining > 0 ? 'text-amber-600' : 'text-muted-foreground'
-                }`}
-              >
-                {formatCurrency(remaining)}
-              </p>
-            </div>
+
           </div>
 
           <div className="mt-6 pt-6 border-t border-border">
-            <Label className="text-sm text-muted-foreground">Description</Label>
+            <Label className="text-sm text-muted-foreground flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Description
+            </Label>
             <Textarea
               className="mt-2"
               rows={4}
@@ -401,7 +427,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
           </div>
 
           <div className="mt-4">
-            <Label className="text-sm text-muted-foreground">Notes</Label>
+            <Label className="text-sm text-muted-foreground flex items-center gap-2">
+              <StickyNote className="w-4 h-4" />
+              Notes
+            </Label>
             <Textarea
               className="mt-2"
               rows={4}
@@ -430,7 +459,10 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
           {order.client_id ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="sm:col-span-2">
-                <Label className="text-sm text-muted-foreground">Name</Label>
+                <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Name
+                </Label>
                 <Input
                   className="mt-2"
                   value={clientData.name}
@@ -484,21 +516,27 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
       <div className="space-y-6">
 
-          <AttachmentForm />
+        <AttachmentForm />
 
-          {order.attachments?.length > 0 && (
-            <Card className="p-6">
-              <h3 className="font-semibold mb-3">Attachments</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {order.attachments.map((att) => (
-                  <AttachmentItem key={att.id} attachment={att} orderId={orderId} />
-                ))}
-              </div>
-            </Card>
-          )}
+        {order.attachments?.length > 0 && (
+          <Card className="p-6">
+            <h3 className="font-semibold mb-3 flex items-center gap-2">
+              <Paperclip className="w-4 h-4" />
+              Attachments
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {order.attachments.map((att) => (
+                <AttachmentItem key={att.id} attachment={att} orderId={orderId} />
+              ))}
+            </div>
+          </Card>
+        )}
 
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Activity Timeline</h2>
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <History className="w-5 h-5" />
+            Activity Timeline
+          </h2>
           <form onSubmit={handleAddActivity} className="mb-6">
             <div className="flex gap-2">
               <Input
