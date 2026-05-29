@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useDeleteConfirm } from '@/lib/hooks/useDeleteConfirm'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Trash2, Loader2 } from 'lucide-react'
 
 export interface ReferenceItem {
   id: string
@@ -50,6 +50,7 @@ export default function ReferenceDataTab({
 }: ReferenceDataTabProps) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<ReferenceItem | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { confirmDelete } = useDeleteConfirm()
   const { register, handleSubmit, reset } = useForm({
     defaultValues: { name: '', color: '#3B82F6', position: 0, description: '' },
@@ -78,19 +79,24 @@ export default function ReferenceDataTab({
     position: number
     description: string
   }) => {
-    const payload: Record<string, unknown> = {
-      name: values.name,
-      color: values.color,
-    }
-    if (showPosition) payload.position = Number(values.position)
-    if (showDescription) payload.description = values.description || null
+    setIsSubmitting(true)
+    try {
+      const payload: Record<string, unknown> = {
+        name: values.name,
+        color: values.color,
+      }
+      if (showPosition) payload.position = Number(values.position)
+      if (showDescription) payload.description = values.description || null
 
-    if (editing) {
-      await onUpdate(editing.id, payload)
-    } else {
-      await onCreate(payload)
+      if (editing) {
+        await onUpdate(editing.id, payload)
+      } else {
+        await onCreate(payload)
+      }
+      setOpen(false)
+    } finally {
+      setIsSubmitting(false)
     }
-    setOpen(false)
   }
 
   const handleDelete = (id: string, name: string) => {
@@ -180,10 +186,19 @@ export default function ReferenceDataTab({
               </div>
             )}
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button type="submit">{editing ? 'Save' : 'Create'}</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="animate-spin" />}
+                {isSubmitting
+                  ? editing
+                    ? 'Saving...'
+                    : 'Creating...'
+                  : editing
+                    ? 'Save'
+                    : 'Create'}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

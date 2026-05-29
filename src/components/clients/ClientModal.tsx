@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { Form } from '@/components/ui/form'
 import CustomInput from '@/components/shared/custom-input'
+import { Loader2 } from 'lucide-react'
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -50,6 +51,8 @@ export default function ClientModal({ open, onOpenChange, client }: ClientModalP
       })
     }
   }, [open, client, form])
+
+  const isSubmitting = createClient.isPending || updateClient.isPending
 
   const onSubmit = async (values: ClientFormValues) => {
     try {
@@ -92,11 +95,15 @@ export default function ClientModal({ open, onOpenChange, client }: ClientModalP
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={createClient.isPending || updateClient.isPending}
-              >
-                {isEditing ? 'Save' : 'Create'}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="animate-spin" />}
+                {isSubmitting
+                  ? isEditing
+                    ? 'Saving...'
+                    : 'Creating...'
+                  : isEditing
+                    ? 'Save'
+                    : 'Create'}
               </Button>
             </DialogFooter>
           </form>

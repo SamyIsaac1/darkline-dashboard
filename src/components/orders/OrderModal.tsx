@@ -27,6 +27,7 @@ import {
 import CustomInput from '../shared/custom-input'
 import CustomSelect from '../shared/custom-select'
 import CustomTextarea from '../shared/custom-textarea'
+import { Loader2 } from 'lucide-react'
 
 const STEP_LABELS = ['Client', 'Order details', 'Notes'] as const
 const TOTAL_STEPS = STEP_LABELS.length
@@ -431,6 +432,7 @@ export default function OrderModal() {
                   disabled={isSubmitting}
                   onClick={() => void form.handleSubmit(onSubmit)()}
                 >
+                  {isSubmitting && <Loader2 className="animate-spin" />}
                   {createClient.isPending
                     ? 'Creating client...'
                     : createOrder.isPending

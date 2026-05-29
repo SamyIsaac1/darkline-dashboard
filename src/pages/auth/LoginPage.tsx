@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -72,8 +73,9 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full" isLoading={loading}>
-            Sign In
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading && <Loader2 className="animate-spin" />}
+            {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
       </div>

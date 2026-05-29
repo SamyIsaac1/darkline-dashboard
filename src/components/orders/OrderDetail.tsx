@@ -23,6 +23,7 @@ import {
   Trash2,
   MapPin,
   MessageCircle,
+  Loader2,
 } from 'lucide-react'
 import {
   Select,
@@ -438,7 +439,8 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                 onChange={(e) => setActivityText(e.target.value)}
               />
               <Button type="submit" disabled={!activityText.trim() || addActivity.isPending}>
-                Add
+                {addActivity.isPending && <Loader2 className="animate-spin" />}
+                {addActivity.isPending ? 'Adding...' : 'Add'}
               </Button>
             </div>
           </form>

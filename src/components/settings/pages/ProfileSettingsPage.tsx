@@ -6,6 +6,7 @@ import { useProfile, useUpdateProfile } from '@/lib/hooks/useProfile'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Loader2 } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -79,7 +80,8 @@ export default function ProfileSettingsPage() {
             )}
           />
           <Button type="submit" disabled={updateProfile.isPending}>
-            Save Profile
+            {updateProfile.isPending && <Loader2 className="animate-spin" />}
+            {updateProfile.isPending ? 'Saving...' : 'Save Profile'}
           </Button>
         </form>
       </Form>
