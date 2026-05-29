@@ -8,7 +8,6 @@ import { useClients, useCreateClient } from '@/lib/hooks/useClients'
 import { toast } from 'sonner'
 import { useStatuses, useStages } from '@/lib/hooks/useReferenceData'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
   DialogContent,
@@ -33,6 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import CustomInput from '../shared/custom-input'
+import CustomTextarea from '../shared/custom-textarea'
 import type { Stage, Status } from '@/types/collection'
 
 const orderFormSchema = z.object({
@@ -307,36 +307,25 @@ export default function OrderModal() {
               <CustomInput<OrderFormValues> control={form.control} name="start_date" label="Start Date" type="date" />
               <CustomInput<OrderFormValues> control={form.control} name="end_date" label="End Date" type="date" />
               <div className="md:col-span-2">
-                <CustomInput<OrderFormValues> control={form.control} name="delivery_address" label="Delivery Address" />
+                <CustomTextarea<OrderFormValues>
+                  control={form.control}
+                  name="delivery_address"
+                  label="Delivery Address"
+                  rows={2}
+                />
               </div>
             </div>
 
-            <FormField
+            <CustomTextarea<OrderFormValues>
               control={form.control}
               name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea rows={3} value={field.value || ''} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Description"
             />
 
-            <FormField
+            <CustomTextarea<OrderFormValues>
               control={form.control}
               name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Textarea rows={3} value={field.value || ''} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Notes"
             />
 
             <DialogFooter>
