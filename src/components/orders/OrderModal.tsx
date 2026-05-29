@@ -8,6 +8,7 @@ import { useClients, useCreateClient } from '@/lib/hooks/useClients'
 import { toast } from 'sonner'
 import { useStatuses, useStages } from '@/lib/hooks/useReferenceData'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Form } from '@/components/ui/form'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form'
 import CustomInput from '../shared/custom-input'
 import CustomSelect from '../shared/custom-select'
 import CustomTextarea from '../shared/custom-textarea'
@@ -39,6 +46,7 @@ const orderFormSchema = z.object({
   total_cost: z.number().nullable().optional(),
   method_of_contact: z.string().optional(),
   notes: z.string().optional(),
+  same_as_client_address: z.boolean().optional(),
 }).superRefine((data, ctx) => {
   if (data.client_mode === 'existing' && !data.client_id) {
     ctx.addIssue({ code: 'custom', message: 'Select a client', path: ['client_id'] })
@@ -78,10 +86,25 @@ export default function OrderModal() {
       total_cost: null,
       method_of_contact: '',
       notes: '',
+      same_as_client_address: false,
     },
   })
 
   const clientMode = form.watch('client_mode')
+  const sameAsClientAddress = form.watch('same_as_client_address')
+  const clientAddress = form.watch('client_address')
+  const clientId = form.watch('client_id')
+
+  const resolvedClientAddress =
+    clientMode === 'new'
+      ? clientAddress ?? ''
+      : clients.find((client) => client.id === clientId)?.address ?? ''
+
+  useEffect(() => {
+    if (sameAsClientAddress) {
+      form.setValue('delivery_address', resolvedClientAddress, { shouldDirty: true })
+    }
+  }, [sameAsClientAddress, resolvedClientAddress, form])
 
   useEffect(() => {
     if (isOrderModalOpen) {
@@ -103,6 +126,7 @@ export default function OrderModal() {
         total_cost: null,
         method_of_contact: '',
         notes: '',
+        same_as_client_address: false,
       })
     }
   }, [isOrderModalOpen, form, statuses, stages])
@@ -243,14 +267,32 @@ export default function OrderModal() {
               <CustomInput<OrderFormValues> control={form.control} name="end_date" label="End Date" type="date" />
             </div>
 
+
+
             <CustomTextarea<OrderFormValues>
               control={form.control}
               name="delivery_address"
               label="Delivery Address"
               rows={3}
               className="min-h-20 resize-y"
+              disabled={sameAsClientAddress}
             />
 
+            <FormField
+              control={form.control}
+              name="same_as_client_address"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-2 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.onChange(checked === true)}
+                    />
+                  </FormControl>
+                  <FormLabel className="font-normal">Same as client address</FormLabel>
+                </FormItem>
+              )}
+            />
             <CustomTextarea<OrderFormValues>
               control={form.control}
               name="description"

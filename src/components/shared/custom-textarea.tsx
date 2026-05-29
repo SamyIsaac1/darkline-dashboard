@@ -9,6 +9,7 @@ type CustomTextareaProps<T extends FieldValues> = {
   rows?: number
   placeholder?: string
   className?: string
+  disabled?: boolean
 }
 
 export default function CustomTextarea<T extends FieldValues>({
@@ -18,6 +19,7 @@ export default function CustomTextarea<T extends FieldValues>({
   rows = 3,
   placeholder,
   className,
+  disabled,
 }: CustomTextareaProps<T>) {
   return (
     <FormField
@@ -31,6 +33,7 @@ export default function CustomTextarea<T extends FieldValues>({
               rows={rows}
               placeholder={placeholder}
               className={className}
+              disabled={disabled}
               value={field.value ?? ''}
               onChange={field.onChange}
               onBlur={field.onBlur}
