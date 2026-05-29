@@ -27,7 +27,7 @@ export default function RevenueByMonthChart({ orders }: RevenueByMonthChartProps
   if (!hasData) {
     return (
       <div className="flex h-[240px] items-center justify-center text-sm text-muted-foreground">
-        No completed order revenue yet
+        No revenue yet
       </div>
     )
   }

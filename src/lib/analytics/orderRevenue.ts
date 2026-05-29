@@ -1,13 +1,7 @@
 import type { OrderWithRelations } from '@/types/collection'
 
-export function isCompletedOrder(order: OrderWithRelations): boolean {
-  const name = order.status?.name
-  return name === 'Completed' || name === 'Delivered'
-}
-
 export function getCompletedRevenue(orders: OrderWithRelations[]): number {
   return orders
-    .filter(isCompletedOrder)
     .reduce((sum, o) => sum + (o.total_cost ?? 0), 0)
 }
 
@@ -35,7 +29,6 @@ export type RevenueByMonth = {
 }
 
 export function getRevenueByMonth(orders: OrderWithRelations[]): RevenueByMonth[] {
-  const completed = orders.filter(isCompletedOrder)
   const now = new Date()
   const months: RevenueByMonth[] = []
 
@@ -46,7 +39,7 @@ export function getRevenueByMonth(orders: OrderWithRelations[]): RevenueByMonth[
     const label = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`
 
-    const revenue = completed
+    const revenue = orders
       .filter((o) => {
         if (!o.created_at) return false
         const created = new Date(o.created_at)
