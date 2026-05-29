@@ -37,6 +37,9 @@ export default function CustomInput<T extends FieldValues>({
                       const raw = e.target.value.replace(/[^0-9.]/g, '')
                       field.onChange(raw === '' ? null : Number(raw))
                     },
+                    onWheel: (e: React.WheelEvent<HTMLInputElement>) => {
+                      e.currentTarget.blur()
+                    },
                   }
                 : type === 'date'
                   ? {
