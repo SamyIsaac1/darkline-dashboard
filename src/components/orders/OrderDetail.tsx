@@ -19,7 +19,6 @@ import { Textarea } from '@/components/ui/textarea'
 import {
   ArrowLeft,
   Calendar,
-  CircleCheck,
   CircleDot,
   ClipboardList,
   DollarSign,
@@ -201,16 +200,18 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link to="/orders">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
+          <Link to="/orders" className="shrink-0">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold font-mono">{order.order_number}</h1>
-            <p className="text-muted-foreground">
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-2xl font-bold font-mono sm:text-3xl">
+              {order.order_number}
+            </h1>
+            <p className="truncate text-sm text-muted-foreground sm:text-base">
               {order.client_id ? (
                 <Link to={`/clients/${order.client_id}`} className="hover:underline">
                   {clientData.name || 'View client'}
@@ -221,8 +222,13 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
             </p>
           </div>
         </div>
-        <Button variant="destructive" onClick={handleDelete} disabled={deleteOrder.isPending}>
-          <Trash2 className="w-4 h-4 mr-2" />
+        <Button
+          variant="destructive"
+          className="w-full shrink-0 gap-2 sm:w-auto"
+          onClick={handleDelete}
+          disabled={deleteOrder.isPending}
+        >
+          <Trash2 className="w-4 h-4" />
           Delete
         </Button>
       </div>
