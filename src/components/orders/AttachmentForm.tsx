@@ -1,14 +1,15 @@
-import { useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAddActivity } from '@/lib/hooks/useOrders'
 import { useUploadAttachment } from '@/lib/hooks/useAttachments'
+import { isImageMimeType } from '@/lib/supabase/storage'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Upload } from 'lucide-react'
+import { FileText, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024
+const MAX_FILE_SIZE = 5 * 1024 * 1024
 const ALLOWED_TYPES = [
   'image/jpeg',
   'image/png',
@@ -29,9 +30,26 @@ export default function AttachmentForm() {
   const addActivity = useAddActivity()
   const uploadAttachment = useUploadAttachment()
 
+  const filePreviews = useMemo(
+    () =>
+      selectedFiles.map((file) => ({
+        file,
+        previewUrl: isImageMimeType(file.type) ? URL.createObjectURL(file) : null,
+      })),
+    [selectedFiles]
+  )
+
+  useEffect(() => {
+    return () => {
+      filePreviews.forEach(({ previewUrl }) => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl)
+      })
+    }
+  }, [filePreviews])
+
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
-      return `${file.name} exceeds 10MB limit`
+      return `${file.name} exceeds 5MB limit`
     }
     if (file.type && !ALLOWED_TYPES.includes(file.type)) {
       return `${file.name} has unsupported file type`
@@ -83,7 +101,7 @@ export default function AttachmentForm() {
       <h3 className="font-semibold mb-4">Upload Attachment</h3>
       <div className="space-y-4">
         <div>
-          <Label htmlFor="file-upload">Files (images, PDF, docs — max 10MB)</Label>
+          <Label htmlFor="file-upload">Files (images, PDF, docs — max 5MB)</Label>
           <input
             id="file-upload"
             ref={fileInputRef}
@@ -95,12 +113,33 @@ export default function AttachmentForm() {
           />
         </div>
 
-        {selectedFiles.length > 0 && (
-          <ul className="text-sm text-muted-foreground space-y-1">
-            {selectedFiles.map((f) => (
-              <li key={f.name}>{f.name} ({(f.size / 1024).toFixed(1)} KB)</li>
+        {filePreviews.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {filePreviews.map(({ file, previewUrl }) => (
+              <div
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                className="rounded-lg border overflow-hidden"
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt={file.name}
+                    className="w-full h-32 object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-32 bg-muted p-3">
+                    <FileText className="w-8 h-8 text-muted-foreground mb-2" />
+                    <span className="text-xs font-medium text-center truncate w-full">
+                      {file.name}
+                    </span>
+                  </div>
+                )}
+                <p className="px-2 py-1.5 text-xs text-muted-foreground truncate">
+                  {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                </p>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
 
         <Button

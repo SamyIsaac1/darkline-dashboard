@@ -1,10 +1,10 @@
 -- Create private bucket for order attachments
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
-  'order-attachments',
-  'order-attachments',
+  'darkline',
+  'darkline',
   false,
-  10485760,
+  5242880,
   ARRAY[
     'image/jpeg',
     'image/png',
@@ -22,14 +22,14 @@ ON CONFLICT (id) DO NOTHING;
 CREATE POLICY "Authenticated users can upload order attachments"
 ON storage.objects FOR INSERT
 TO authenticated
-WITH CHECK (bucket_id = 'order-attachments');
+WITH CHECK (bucket_id = 'darkline');
 
 CREATE POLICY "Authenticated users can view order attachments"
 ON storage.objects FOR SELECT
 TO authenticated
-USING (bucket_id = 'order-attachments');
+USING (bucket_id = 'darkline');
 
 CREATE POLICY "Authenticated users can delete order attachments"
 ON storage.objects FOR DELETE
 TO authenticated
-USING (bucket_id = 'order-attachments');
+USING (bucket_id = 'darkline');
