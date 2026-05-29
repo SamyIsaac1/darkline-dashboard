@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { Plus, Search, Phone, MapPin } from 'lucide-react'
+import WhatsAppPhoneLink from '@/components/shared/whatsapp-phone-link'
+import { Plus, Search, MapPin } from 'lucide-react'
 import ClientModal from './ClientModal'
 
 export default function ClientsContent() {
@@ -18,6 +19,7 @@ export default function ClientsContent() {
     return (
       (c.name?.toLowerCase().includes(q) ?? false) ||
       (c.phone?.toLowerCase().includes(q) ?? false) ||
+      (c.phone_2?.toLowerCase().includes(q) ?? false) ||
       (c.address?.toLowerCase().includes(q) ?? false)
     )
   })
@@ -55,23 +57,28 @@ export default function ClientsContent() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((client) => (
-            <Link key={client.id} to={`/clients/${client.id}`}>
-              <Card className="p-6 hover:shadow-lg transition-shadow">
-                <h3 className="font-semibold text-lg">{client.name || 'Unnamed'}</h3>
-                {client.phone && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-2 mt-2">
-                    <Phone className="w-4 h-4" />
-                    {client.phone}
-                  </p>
-                )}
-                {client.address && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                    <MapPin className="w-4 h-4" />
-                    {client.address}
-                  </p>
-                )}
-              </Card>
-            </Link>
+            <Card
+              key={client.id}
+              className="p-6 hover:shadow-lg transition-shadow flex flex-col gap-2"
+            >
+              <Link
+                to={`/clients/${client.id}`}
+                className="font-semibold text-lg hover:underline"
+              >
+                {client.name || 'Unnamed'}
+              </Link>
+              {client.phone && <WhatsAppPhoneLink phone={client.phone} />}
+              {client.phone_2 && <WhatsAppPhoneLink phone={client.phone_2} />}
+              {client.address && (
+                <Link
+                  to={`/clients/${client.id}`}
+                  className="text-sm text-muted-foreground flex items-center gap-2 mt-1 hover:underline"
+                >
+                  <MapPin className="w-4 h-4 shrink-0" />
+                  {client.address}
+                </Link>
+              )}
+            </Card>
           ))}
         </div>
       )}

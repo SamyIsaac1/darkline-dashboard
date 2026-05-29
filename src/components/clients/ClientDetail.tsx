@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
+import WhatsAppPhoneLink from '@/components/shared/whatsapp-phone-link'
 import ClientModal from './ClientModal'
 
 interface ClientDetailProps {
@@ -73,11 +74,23 @@ export default function ClientDetail({ clientId }: ClientDetailProps) {
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <dt className="text-sm text-muted-foreground">Phone</dt>
-            <dd className="font-medium">{client.phone || '—'}</dd>
+            <dd className="font-medium">
+              {client.phone ? (
+                <WhatsAppPhoneLink phone={client.phone} className="text-foreground" />
+              ) : (
+                '—'
+              )}
+            </dd>
           </div>
           <div>
             <dt className="text-sm text-muted-foreground">Phone 2</dt>
-            <dd className="font-medium">{client.phone_2 || '—'}</dd>
+            <dd className="font-medium">
+              {client.phone_2 ? (
+                <WhatsAppPhoneLink phone={client.phone_2} className="text-foreground" />
+              ) : (
+                '—'
+              )}
+            </dd>
           </div>
           <div className="sm:col-span-2">
             <dt className="text-sm text-muted-foreground">Address</dt>
