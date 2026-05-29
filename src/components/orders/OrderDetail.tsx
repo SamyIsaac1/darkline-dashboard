@@ -8,7 +8,9 @@ import {
 import { useUpdateClient } from '@/lib/hooks/useClients'
 import { useDeleteConfirm } from '@/lib/hooks/useDeleteConfirm'
 import { useStatuses, useStages } from '@/lib/hooks/useReferenceData'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { getOutstandingBalance } from '@/lib/analytics/orderRevenue'
+import { formatCurrency } from '@/lib/utils/formatCurrency'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -114,6 +116,15 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
       [field]: value || null,
     })
   }
+
+  const remaining = useMemo(() => {
+    if (!order) return 0
+    return getOutstandingBalance({
+      ...order,
+      deposit: orderData.deposit,
+      total_cost: orderData.total_cost,
+    })
+  }, [order, orderData.deposit, orderData.total_cost])
 
   if (isLoading) {
     return (
@@ -330,7 +341,12 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
             </div>
 
             <div>
-              <Label className="text-sm text-muted-foreground">Shipping Price</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label className="text-sm text-muted-foreground">Shipping Price</Label>
+                {orderData.shipping_paid && (
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Paid</Badge>
+                )}
+              </div>
               <Input
                 type="number"
                 className="mt-2"
@@ -356,6 +372,20 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                 />
                 <span className="text-sm">Shipping paid</span>
               </label>
+            </div>
+
+            <div>
+              <Label className="text-sm text-muted-foreground flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Remaining
+              </Label>
+              <p
+                className={`mt-2 text-lg font-semibold tabular-nums ${
+                  remaining > 0 ? 'text-amber-600' : 'text-muted-foreground'
+                }`}
+              >
+                {formatCurrency(remaining)}
+              </p>
             </div>
           </div>
 
