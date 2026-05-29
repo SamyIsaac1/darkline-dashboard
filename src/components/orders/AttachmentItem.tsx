@@ -1,4 +1,5 @@
 import { useAttachmentUrl, useDeleteAttachment } from '@/lib/hooks/useAttachments'
+import { useDeleteConfirm } from '@/lib/hooks/useDeleteConfirm'
 import { useAddActivity } from '@/lib/hooks/useOrders'
 import { isImageMimeType } from '@/lib/supabase/storage'
 import type { Attachment } from '@/types/collection'
@@ -15,20 +16,24 @@ export default function AttachmentItem({ attachment, orderId }: AttachmentItemPr
   const { data: url, isLoading } = useAttachmentUrl(attachment.file_path)
   const deleteAttachment = useDeleteAttachment()
   const addActivity = useAddActivity()
+  const { confirmDelete } = useDeleteConfirm()
 
-  const handleDelete = async () => {
-    if (!confirm(`Delete "${attachment.file_name}"?`)) return
+  const handleDelete = () => {
+    confirmDelete({
+      itemName: attachment.file_name,
+      onConfirm: async () => {
+        await deleteAttachment.mutateAsync({
+          id: attachment.id,
+          filePath: attachment.file_path,
+          orderId,
+        })
 
-    await deleteAttachment.mutateAsync({
-      id: attachment.id,
-      filePath: attachment.file_path,
-      orderId,
-    })
-
-    addActivity.mutate({
-      orderId,
-      activityType: 'attachment',
-      description: `Removed attachment: ${attachment.file_name}`,
+        addActivity.mutate({
+          orderId,
+          activityType: 'attachment',
+          description: `Removed attachment: ${attachment.file_name}`,
+        })
+      },
     })
   }
 

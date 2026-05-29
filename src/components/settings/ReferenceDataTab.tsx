@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useDeleteConfirm } from '@/lib/hooks/useDeleteConfirm'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 
 export interface ReferenceItem {
@@ -49,6 +50,7 @@ export default function ReferenceDataTab({
 }: ReferenceDataTabProps) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<ReferenceItem | null>(null)
+  const { confirmDelete } = useDeleteConfirm()
   const { register, handleSubmit, reset } = useForm({
     defaultValues: { name: '', color: '#3B82F6', position: 0, description: '' },
   })
@@ -91,9 +93,11 @@ export default function ReferenceDataTab({
     setOpen(false)
   }
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete "${name}"?`)) return
-    await onDelete(id)
+  const handleDelete = (id: string, name: string) => {
+    confirmDelete({
+      itemName: name,
+      onConfirm: () => onDelete(id),
+    })
   }
 
   return (

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useClient, useDeleteClient } from '@/lib/hooks/useClients'
+import { useDeleteConfirm } from '@/lib/hooks/useDeleteConfirm'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
@@ -16,16 +17,18 @@ export default function ClientDetail({ clientId }: ClientDetailProps) {
   const navigate = useNavigate()
   const { data: client, isLoading } = useClient(clientId)
   const deleteClient = useDeleteClient()
+  const { confirmDelete } = useDeleteConfirm()
   const [editOpen, setEditOpen] = useState(false)
 
-  const handleDelete = async () => {
-    if (!confirm('Delete this client? Orders linked to them may be affected.')) return
-    try {
-      await deleteClient.mutateAsync(clientId)
-      navigate('/clients')
-    } catch (error) {
-      console.error(error)
-    }
+  const handleDelete = () => {
+    confirmDelete({
+      title: 'Delete this client?',
+      description: 'Orders linked to this client may be affected. This cannot be undone.',
+      onConfirm: async () => {
+        await deleteClient.mutateAsync(clientId)
+        navigate('/clients')
+      },
+    })
   }
 
   if (isLoading) {

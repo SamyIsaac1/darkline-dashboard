@@ -6,6 +6,7 @@ import {
   useAddActivity,
 } from '@/lib/hooks/useOrders'
 import { useUpdateClient } from '@/lib/hooks/useClients'
+import { useDeleteConfirm } from '@/lib/hooks/useDeleteConfirm'
 import { useStatuses, useStages } from '@/lib/hooks/useReferenceData'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -47,6 +48,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
   const updateClient = useUpdateClient()
   const deleteOrder = useDeleteOrder()
   const addActivity = useAddActivity()
+  const { confirmDelete } = useDeleteConfirm()
 
   const [activityText, setActivityText] = useState('')
 
@@ -142,11 +144,15 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
     })
   }
 
-  const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this order?')) {
-      await deleteOrder.mutateAsync(orderId)
-      navigate('/orders')
-    }
+  const handleDelete = () => {
+    confirmDelete({
+      title: 'Delete this order?',
+      description: 'This will permanently remove the order and its attachments.',
+      onConfirm: async () => {
+        await deleteOrder.mutateAsync(orderId)
+        navigate('/orders')
+      },
+    })
   }
 
   const handleAddActivity = async (e: React.FormEvent) => {
